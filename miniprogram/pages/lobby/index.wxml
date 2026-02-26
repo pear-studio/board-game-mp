@@ -1,0 +1,24 @@
+<view class="lobby-page">
+  <view class="lobby-header">
+    <text class="lobby-title">🎮 聚会游戏</text>
+    <text class="lobby-subtitle">选择一个游戏，开始欢乐时光</text>
+  </view>
+
+  <view class="game-list">
+    <view
+      class="game-card"
+      wx:for="{{games}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onGameTap"
+    >
+      <view class="game-card-emoji">{{item.emoji}}</view>
+      <view class="game-card-info">
+        <text class="game-card-name">{{item.name}}</text>
+        <text class="game-card-desc">{{item.desc}}</text>
+        <text class="game-card-players">{{item.minPlayers}}～{{item.maxPlayers}} 人</text>
+      </view>
+      <view class="game-card-arrow">▶</view>
+    </view>
+  </view>
+</view>

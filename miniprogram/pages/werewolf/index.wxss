@@ -1,0 +1,1170 @@
+/* ── 基础布局 ─────────────────────────────── */
+.ww-page {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+  padding: 40rpx 32rpx 80rpx;
+  box-sizing: border-box;
+  color: #fff;
+}
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32rpx;
+  width: 100%;
+}
+
+/* ── 通用 stage-header ──────────────────── */
+.stage-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+  padding: 48rpx 0 24rpx;
+}
+
+.stage-emoji {
+  font-size: 96rpx;
+}
+
+.stage-title {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.stage-desc {
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  line-height: 1.7;
+  white-space: pre-line;
+}
+
+/* ── 通用按钮 ───────────────────────────── */
+.btn-primary {
+  width: 100%;
+  background: linear-gradient(135deg, #e94560, #c0392b);
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: 600;
+  border-radius: 56rpx;
+  padding: 28rpx 0;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(233,69,96,0.4);
+  margin-top: 16rpx;
+}
+
+.btn-primary:active {
+  opacity: 0.85;
+  transform: scale(0.98);
+}
+
+.btn-success {
+  width: 100%;
+  background: linear-gradient(135deg, #27ae60, #1e8449);
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: 600;
+  border-radius: 56rpx;
+  padding: 28rpx 0;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(39,174,96,0.4);
+}
+
+.btn-success:active {
+  opacity: 0.85;
+}
+
+/* ── 阶段1：设置 ───────────────────────── */
+.setup-card {
+  width: 100%;
+  background: rgba(255,255,255,0.07);
+  border: 1rpx solid rgba(255,255,255,0.12);
+  border-radius: 28rpx;
+  padding: 40rpx 36rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.setup-label {
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.6);
+}
+
+.player-count-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8rpx;
+}
+
+.player-count-num {
+  font-size: 80rpx;
+  font-weight: 700;
+  color: #e94560;
+  line-height: 1;
+}
+
+.player-count-unit {
+  font-size: 32rpx;
+  color: rgba(255,255,255,0.7);
+}
+
+.count-range-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.4);
+  padding: 0 8rpx;
+}
+
+.role-preview {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 8rpx;
+}
+
+.role-preview-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx 0;
+  border-radius: 16rpx;
+  gap: 8rpx;
+}
+
+.role-preview-item.wolf { background: rgba(233,69,96,0.2); }
+.role-preview-item.prophet { background: rgba(155,89,182,0.2); }
+.role-preview-item.villager { background: rgba(39,174,96,0.2); }
+
+.role-icon { font-size: 44rpx; }
+.role-name { font-size: 22rpx; color: rgba(255,255,255,0.75); }
+
+.rules-brief {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  width: 100%;
+  padding: 24rpx 28rpx;
+  background: rgba(255,255,255,0.04);
+  border-radius: 20rpx;
+  margin-top: 4rpx;
+}
+
+.rules-title {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 4rpx;
+}
+
+.rules-text {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.55);
+  line-height: 1.6;
+}
+
+/* ── 阶段2：选词 ───────────────────────── */
+.chief-badge {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  background: rgba(255,215,0,0.15);
+  border: 1rpx solid rgba(255,215,0,0.35);
+  border-radius: 40rpx;
+  padding: 8rpx 24rpx;
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.7);
+}
+
+.chief-name {
+  color: #ffd700;
+  font-weight: 700;
+  font-size: 30rpx;
+}
+
+.word-choices {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.word-card {
+  width: 100%;
+  background: rgba(255,255,255,0.08);
+  border: 2rpx solid rgba(255,255,255,0.18);
+  border-radius: 24rpx;
+  padding: 48rpx 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.word-card:active {
+  background: rgba(233,69,96,0.25);
+  border-color: #e94560;
+  transform: scale(0.97);
+}
+
+.word-text {
+  font-size: 52rpx;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 6rpx;
+}
+
+/* ── 阶段3：查看咒语 ───────────────────── */
+.current-viewer-name {
+  font-size: 52rpx;
+  font-weight: 700;
+  color: #ffd700;
+}
+
+.role-badge {
+  padding: 8rpx 28rpx;
+  border-radius: 40rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.role-badge.wolf { background: rgba(233,69,96,0.3); color: #ff8096; border: 1rpx solid #e94560; }
+.role-badge.prophet { background: rgba(155,89,182,0.3); color: #c39bd3; border: 1rpx solid #9b59b6; }
+
+.spell-reveal-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.spell-box {
+  width: 100%;
+  height: 240rpx;
+  border-radius: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.spell-box.hidden {
+  background: rgba(255,255,255,0.05);
+  border: 2rpx dashed rgba(255,255,255,0.25);
+}
+
+.spell-box.visible {
+  background: rgba(233,69,96,0.2);
+  border: 2rpx solid #e94560;
+}
+
+.spell-word {
+  font-size: 80rpx;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 8rpx;
+}
+
+.spell-cover {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.spell-cover-icon { font-size: 56rpx; opacity: 0.5; }
+.spell-cover-text { font-size: 28rpx; color: rgba(255,255,255,0.45); }
+
+.spell-hint {
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.35);
+}
+
+.view-progress {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14rpx;
+  margin-top: 8rpx;
+}
+
+.view-progress-text {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.4);
+}
+
+.view-progress-bar {
+  width: 100%;
+  height: 8rpx;
+  background: rgba(255,255,255,0.1);
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.view-progress-fill {
+  height: 100%;
+  background: #e94560;
+  border-radius: 8rpx;
+  transition: width 0.3s;
+}
+
+/* ── 阶段4：倒计时 ─────────────────────── */
+.countdown-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32rpx;
+}
+
+.countdown-ring {
+  width: 300rpx;
+  height: 300rpx;
+  border-radius: 50%;
+  background: rgba(233,69,96,0.12);
+  border: 8rpx solid #e94560;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.countdown-num {
+  font-size: 120rpx;
+  font-weight: 700;
+  color: #e94560;
+  line-height: 1;
+}
+
+.countdown-unit {
+  font-size: 30rpx;
+  color: rgba(255,255,255,0.5);
+}
+
+.countdown-track {
+  width: 100%;
+  height: 12rpx;
+  background: rgba(255,255,255,0.1);
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+.countdown-track-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #e94560, #ff8096);
+  border-radius: 12rpx;
+  transition: width 0.5s linear;
+}
+
+.countdown-tip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.countdown-tip-text {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.5);
+}
+
+/* ── 阶段5：结果 ───────────────────────── */
+.result-header {
+  width: 100%;
+  border-radius: 28rpx;
+  padding: 48rpx 0 36rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.result-header.win { background: rgba(39,174,96,0.15); border: 2rpx solid rgba(39,174,96,0.4); }
+.result-header.lose { background: rgba(233,69,96,0.15); border: 2rpx solid rgba(233,69,96,0.4); }
+
+.result-emoji { font-size: 96rpx; }
+
+.result-title {
+  font-size: 52rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.result-subtitle {
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.6);
+}
+
+.spell-reveal-result {
+  width: 100%;
+  background: rgba(255,215,0,0.1);
+  border: 1rpx solid rgba(255,215,0,0.3);
+  border-radius: 20rpx;
+  padding: 28rpx 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.spell-reveal-label {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.55);
+}
+
+.spell-reveal-word {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #ffd700;
+}
+
+.player-list {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border-radius: 24rpx;
+  padding: 24rpx 28rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.player-list-title {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 16rpx;
+}
+
+.player-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid rgba(255,255,255,0.07);
+}
+
+.player-item:last-child { border-bottom: none; }
+
+.player-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.player-item-num {
+  font-size: 30rpx;
+  color: rgba(255,255,255,0.85);
+  font-weight: 600;
+}
+
+.chief-tag {
+  background: rgba(255,215,0,0.2);
+  color: #ffd700;
+  font-size: 22rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 20rpx;
+  border: 1rpx solid rgba(255,215,0,0.4);
+}
+
+.player-item-role {
+  font-size: 26rpx;
+  padding: 8rpx 20rpx;
+  border-radius: 20rpx;
+}
+
+.role-wolf { background: rgba(233,69,96,0.25); color: #ff8096; }
+.role-prophet { background: rgba(155,89,182,0.25); color: #c39bd3; }
+.role-villager { background: rgba(39,174,96,0.2); color: #7dcea0; }
+
+/* ── 阶段2：查看身份 ──────────────────── */
+.role-view-card {
+  width: 100%;
+  background: rgba(255,255,255,0.07);
+  border: 1rpx solid rgba(255,255,255,0.12);
+  border-radius: 28rpx;
+  padding: 40rpx 36rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.role-view-num-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.role-view-num {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #ffd700;
+}
+
+.role-box {
+  width: 100%;
+  height: 240rpx;
+  border-radius: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;   /* 防止内容超出圆角框 */
+}
+
+.role-box.hidden {
+  background: rgba(255,255,255,0.05);
+  border: 2rpx dashed rgba(255,255,255,0.25);
+}
+
+/* 按角色着色 */
+.role-box.visible           { background: rgba(255,215,0,0.12);  border: 2rpx solid rgba(255,215,0,0.5); }
+.role-box.role-box-wolf     { background: rgba(233,69,96,0.2);   border: 2rpx solid #e94560; }
+.role-box.role-box-prophet  { background: rgba(155,89,182,0.2);  border: 2rpx solid #9b59b6; }
+.role-box.role-box-villager { background: rgba(39,174,96,0.15);  border: 2rpx solid #27ae60; }
+
+.role-reveal-name {
+  font-size: 72rpx;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 8rpx;
+  text-align: center;
+}
+
+/* ── 公布村长卡片 ───────────────────────── */
+.chief-announce-card {
+  width: 100%;
+  background: rgba(255,215,0,0.1);
+  border: 2rpx solid rgba(255,215,0,0.4);
+  border-radius: 28rpx;
+  padding: 48rpx 36rpx 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.chief-announce-label {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 4rpx;
+}
+
+.chief-announce-num-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.chief-announce-crown {
+  font-size: 64rpx;
+}
+
+.chief-announce-num {
+  font-size: 64rpx;
+  font-weight: 800;
+  color: #ffd700;
+  letter-spacing: 2rpx;
+}
+
+.chief-announce-tip {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.45);
+  text-align: center;
+  line-height: 1.6;
+  margin-top: 8rpx;
+}
+
+/* ── 角色配置 & 时间配置 ───────────────── */
+.divider {
+  width: 100%;
+  height: 1rpx;
+  background: rgba(255,255,255,0.1);
+  margin: 4rpx 0;
+}
+
+.role-config-row {
+  display: flex;
+  gap: 12rpx;
+}
+
+.role-config-item {
+  flex: 1;
+  border-radius: 20rpx;
+  padding: 20rpx 12rpx 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.wolf-bg   { background: rgba(233,69,96,0.18);   border: 1rpx solid rgba(233,69,96,0.35); }
+.prophet-bg{ background: rgba(155,89,182,0.18);  border: 1rpx solid rgba(155,89,182,0.35); }
+.villager-bg{ background: rgba(39,174,96,0.18);  border: 1rpx solid rgba(39,174,96,0.35); }
+
+.role-config-icon { font-size: 36rpx; }
+.role-config-name { font-size: 22rpx; color: rgba(255,255,255,0.65); }
+
+.role-stepper {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  margin-top: 4rpx;
+}
+
+.stepper-btn {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  color: #fff;
+  font-weight: 700;
+}
+
+.stepper-btn:active { background: rgba(255,255,255,0.3); }
+
+.stepper-num {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #fff;
+  min-width: 32rpx;
+  text-align: center;
+}
+
+.villager-num {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #7dcea0;
+  margin-top: 4rpx;
+}
+
+.time-config-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16rpx;
+}
+
+.time-btn {
+  width: auto;
+  height: auto;
+  border-radius: 20rpx;
+  padding: 12rpx 20rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.time-display {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.08);
+  border-radius: 20rpx;
+  padding: 16rpx 0;
+}
+
+.time-num {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #e94560;
+}
+
+/* ── 语音字幕浮层 ──────────────────────── */
+.audio-hint {
+  position: fixed;
+  bottom: 120rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 48rpx;
+  padding: 20rpx 44rpx;
+  z-index: 100;
+  max-width: 80%;
+  text-align: center;
+  backdrop-filter: blur(8px);
+  border: 1rpx solid rgba(255,255,255,0.15);
+}
+
+.audio-hint-text {
+  font-size: 30rpx;
+  color: #fff;
+  font-weight: 500;
+  letter-spacing: 2rpx;
+}
+
+/* ── 确认交给村长阶段 ──────────────────── */
+.confirm-spell-stage {
+  justify-content: center;
+  min-height: 80vh;
+}
+
+.confirm-spell-card {
+  width: 100%;
+  background: rgba(255,215,0,0.08);
+  border: 2rpx solid rgba(255,215,0,0.35);
+  border-radius: 32rpx;
+  padding: 64rpx 40rpx 56rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.confirm-spell-icon {
+  font-size: 96rpx;
+}
+
+.confirm-spell-title {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.confirm-spell-desc {
+  font-size: 30rpx;
+  color: rgba(255,255,255,0.65);
+  margin-top: 8rpx;
+}
+
+.confirm-chief-badge {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  background: rgba(255,215,0,0.2);
+  border: 1rpx solid rgba(255,215,0,0.5);
+  border-radius: 48rpx;
+  padding: 16rpx 40rpx;
+}
+
+.confirm-chief-crown {
+  font-size: 52rpx;
+}
+
+.confirm-chief-num {
+  font-size: 52rpx;
+  font-weight: 800;
+  color: #ffd700;
+  letter-spacing: 2rpx;
+}
+
+.confirm-spell-tip {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.4);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* ── 四方向咒语展示 ────────────────────── */
+.view-spell-stage {
+  padding: 0;
+}
+
+/* 咒语展示时全屏铺满（top 由 style 动态覆盖，避开导航栏） */
+.four-dir-container {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(160deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+/* 四个方向的词语 */
+.four-dir-item {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.four-dir-item.top {
+  top: 60rpx;
+  left: 0; right: 0;
+  transform: rotate(180deg);
+}
+
+.four-dir-item.bottom {
+  bottom: 60rpx;
+  left: 0; right: 0;
+}
+
+.four-dir-item.left {
+  left: -40rpx;
+  top: 0; bottom: 0;
+  transform: rotate(90deg);
+  width: 280rpx;
+}
+
+.four-dir-item.right {
+  right: -40rpx;
+  top: 0; bottom: 0;
+  transform: rotate(-90deg);
+  width: 280rpx;
+}
+
+.four-dir-word {
+  font-size: 72rpx;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 10rpx;
+  text-shadow: 0 0 40rpx rgba(233,69,96,0.6), 0 0 80rpx rgba(233,69,96,0.3);
+  white-space: nowrap;
+}
+
+/* 中央倒计时环 */
+.four-dir-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 50%;
+  background: rgba(233,69,96,0.15);
+  border: 6rpx solid rgba(233,69,96,0.7);
+  gap: 0;
+}
+
+.four-dir-countdown {
+  font-size: 88rpx;
+  font-weight: 800;
+  color: #e94560;
+  line-height: 1;
+}
+
+.four-dir-countdown-unit {
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.5);
+}
+
+/* 手动跳过按钮 */
+.four-dir-skip {
+  position: absolute;
+  bottom: 120rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,0.12);
+  border: 1rpx solid rgba(255,255,255,0.25);
+  border-radius: 48rpx;
+  padding: 16rpx 56rpx;
+}
+
+.four-dir-skip-text {
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.6);
+  letter-spacing: 2rpx;
+}
+
+/* 等待语音播放时的画面 */
+.spell-waiting {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32rpx;
+}
+
+.spell-waiting-tip {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1rpx dashed rgba(255,255,255,0.2);
+  border-radius: 24rpx;
+  padding: 48rpx 32rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.spell-waiting-icon {
+  font-size: 72rpx;
+}
+
+.spell-waiting-text {
+  font-size: 30rpx;
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+/* ── 自定义导航栏 ──────────────────────── */
+.custom-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: #1a1a2e;
+  z-index: 200;
+}
+
+.custom-nav-bar {
+  /* height 和 padding-right 由 JS 动态注入，精确避开胶囊按钮 */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24rpx;
+  box-sizing: border-box;
+}
+
+/* 左侧按钮组：返回箭头 + 规则 + 返回设置 */
+.nav-left-btns {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  flex: 1;
+}
+
+.nav-back {
+  font-size: 56rpx;
+  color: #fff;
+  line-height: 1;
+  opacity: 0.85;
+  margin-right: 4rpx;
+}
+
+.nav-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #fff;
+  flex: 1;
+  text-align: center;
+}
+
+/* 右侧占位，与左侧等宽，保证标题居中 */
+.nav-placeholder {
+  flex: 1;
+}
+
+.nav-rules-btn {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.6);
+  background: rgba(255,255,255,0.1);
+  border: 1rpx solid rgba(255,255,255,0.2);
+  border-radius: 28rpx;
+  padding: 6rpx 18rpx;
+  white-space: nowrap;
+}
+
+.nav-reset-btn {
+  font-size: 24rpx;
+  color: rgba(255,180,100,0.9);
+  background: rgba(255,160,50,0.15);
+  border: 1rpx solid rgba(255,160,50,0.35);
+  border-radius: 28rpx;
+  padding: 6rpx 18rpx;
+  white-space: nowrap;
+}
+
+/* ── 规则弹窗 ──────────────────────────── */
+.rules-modal-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 500;
+  display: flex;
+  align-items: flex-end;
+}
+
+.rules-modal {
+  width: 100%;
+  max-height: 82vh;
+  background: #16213e;
+  border-radius: 32rpx 32rpx 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.rules-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 36rpx 40rpx 24rpx;
+  border-bottom: 1rpx solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+
+.rules-modal-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.rules-modal-close {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.7);
+}
+
+.rules-modal-body {
+  flex: 1;
+  padding: 32rpx 40rpx 60rpx;
+  overflow-y: auto;
+  /* 防止文字超出弹窗宽度 */
+  box-sizing: border-box;
+  width: 100%;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.rules-section-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #e94560;
+  margin: 32rpx 0 12rpx;
+}
+
+.rules-section-title:first-child {
+  margin-top: 0;
+}
+
+.rules-section-text {
+  display: block;
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.9;
+  white-space: pre-line;
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+/* ── 投票阶段 ──────────────────────────── */
+.vote-stage {
+  padding-top: 16rpx;
+  gap: 40rpx;
+}
+
+.vote-info-card {
+  width: 100%;
+  border-radius: 28rpx;
+  padding: 48rpx 36rpx 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.vote-info-card.wolf-theme {
+  background: rgba(233,69,96,0.12);
+  border: 2rpx solid rgba(233,69,96,0.4);
+}
+
+.vote-info-card.villager-theme {
+  background: rgba(39,174,96,0.12);
+  border: 2rpx solid rgba(39,174,96,0.4);
+}
+
+.vote-info-emoji {
+  font-size: 80rpx;
+}
+
+.vote-info-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+}
+
+.vote-info-desc {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  line-height: 1.8;
+  white-space: pre-line;
+}
+
+/* 投票倒计时 */
+.vote-countdown-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 240rpx;
+  height: 240rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  border: 6rpx solid rgba(255,255,255,0.2);
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.vote-countdown-wrap.alert {
+  background: rgba(233,69,96,0.25);
+  border-color: #e94560;
+  animation: vote-pulse 0.6s ease-in-out infinite alternate;
+}
+
+@keyframes vote-pulse {
+  from { transform: scale(1); }
+  to   { transform: scale(1.08); }
+}
+
+.vote-countdown-num {
+  font-size: 100rpx;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  transition: font-size 0.2s, color 0.2s;
+}
+
+.vote-countdown-num.alert {
+  font-size: 140rpx;
+  color: #e94560;
+}
+
+.vote-countdown-unit {
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.5);
+  margin-top: 4rpx;
+}
+
+/* 投票结果按钮区 */
+.vote-btns {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.vote-btns-label {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.45);
+  text-align: center;
+  margin-bottom: 4rpx;
+}
+
+.vote-btn {
+  width: 100%;
+  font-size: 32rpx;
+  font-weight: 600;
+  border-radius: 56rpx;
+  padding: 28rpx 0;
+  border: none;
+  margin-top: 0;
+}
+
+.btn-wolf {
+  background: rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.65);
+  border: 1rpx solid rgba(255,255,255,0.2);
+  font-size: 32rpx;
+  font-weight: 600;
+  border-radius: 56rpx;
+  padding: 28rpx 0;
+}
+
+.btn-wolf:active { opacity: 0.8; }

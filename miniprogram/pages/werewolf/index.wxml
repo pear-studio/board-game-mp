@@ -1,0 +1,411 @@
+<view class="ww-page">
+
+  <!-- ══════════════════════════════════════
+       自定义导航栏
+  ══════════════════════════════════════ -->
+  <view class="custom-nav" style="padding-top: {{statusBarHeight}}px">
+    <view class="custom-nav-bar" style="height: {{navBarHeight}}px; padding-right: {{navRightPadding}}px">
+      <view class="nav-left-btns">
+        <navigator class="nav-back" open-type="navigateBack">‹</navigator>
+        <view class="nav-rules-btn" bindtap="openRules">规则</view>
+        <view wx:if="{{currentStep !== 'setup'}}" class="nav-reset-btn" bindtap="goSetup">返回</view>
+      </view>
+      <text class="nav-title">狼人真言</text>
+      <view class="nav-placeholder"></view>
+    </view>
+  </view>
+  <!-- 导航栏占位 -->
+  <view style="height: {{statusBarHeight + navBarHeight}}px"></view>
+
+  <!-- ══════════════════════════════════════
+       规则弹窗
+  ══════════════════════════════════════ -->
+  <view class="rules-modal-mask" wx:if="{{showRules}}" bindtap="closeRules">
+    <view class="rules-modal" catchtap="">
+      <view class="rules-modal-header">
+        <text class="rules-modal-title">🐺 狼人真言 · 完整规则</text>
+        <view class="rules-modal-close" bindtap="closeRules">✕</view>
+      </view>
+      <scroll-view scroll-y class="rules-modal-body">
+
+        <text class="rules-section-title">🎯 游戏目标</text>
+        <text class="rules-section-text">村民阵营：在限定时间内，通过向村长提问猜出本局咒语。
+狼人阵营：阻止村民猜出咒语，并在投票环节消灭预言家。</text>
+
+        <text class="rules-section-title">👥 角色说明</text>
+        <text class="rules-section-text">👑 村长：游戏主持人，知道咒语，只能回答"是"或"否"。
+🐺 狼人：提前知道咒语，混入村民中误导提问方向。
+🔮 预言家：提前知道咒语，帮助村民快速找到正确方向。
+🧑 村民：不知道咒语，靠提问推理来猜出答案。</text>
+
+        <text class="rules-section-title">🔄 游戏流程</text>
+        <text class="rules-section-text">① 随机分配角色，公布村长座位号
+② 手机依次传给每位玩家查看身份（私密）
+③ 手机交给村长，从3个词中选一个作为咒语
+④ 所有人闭眼，狼人和预言家依次被唤醒查看咒语
+⑤ 所有人睁眼，限时提问开始
+⑥ 村长只能回答"是"或"否"，所有人都可以提问
+⑦ 限时内猜出→村民方先胜，超时→狼人方先胜
+⑧ 进入投票环节（见下）</text>
+
+        <text class="rules-section-title">🗳️ 投票环节</text>
+        <text class="rules-section-text">【村民猜出咒语后（有预言家）】
+狼人阵营有30秒讨论，可以互相透露身份，最终所有人同时指出认为是"预言家"的玩家。
+· 投中预言家 → 狼人最终获胜
+· 未投中 → 村民最终获胜
+
+【时间到狼人先胜（有狼人）】
+所有人有30秒讨论，可以自称任意身份，最终同时指出认为是"狼人"的玩家。
+· 投中狼人 → 村民最终获胜
+· 平票且其中一人是狼人 → 村民最终获胜
+· 未投中 → 狼人最终获胜</text>
+
+        <text class="rules-section-title">⚙️ 特殊情况</text>
+        <text class="rules-section-text">没有狼人：没有人提前知道咒语，也没有投票环节，村民猜出直接胜利。
+没有预言家：没有帮助村民的内线，猜出后也无需投票，村民直接胜利。
+纯村民局：无身份查看环节，村长直接选词开始游戏，猜出即村民胜。</text>
+
+      </scroll-view>
+    </view>
+  </view>
+
+
+  <!-- ══════════════════════════════════════
+       阶段1：设置人数
+  ══════════════════════════════════════ -->
+  <view class="stage" wx:if="{{currentStep === 'setup'}}">
+    <view class="stage-header">
+      <text class="stage-emoji">🐺</text>
+      <text class="stage-title">狼人真言</text>
+      <text class="stage-desc">村长守护咒语，狼人暗中知晓\n村民能在限定时间内猜出吗？</text>
+    </view>
+
+    <view class="setup-card">
+      <!-- 人数选择 -->
+      <text class="setup-label">玩家人数</text>
+      <view class="player-count-row">
+        <text class="player-count-num">{{playerCount}}</text>
+        <text class="player-count-unit">人</text>
+      </view>
+      <slider
+        class="count-slider"
+        min="0" max="6" step="1"
+        value="{{playerCount - 4}}"
+        activeColor="#e94560"
+        backgroundColor="rgba(255,255,255,0.15)"
+        block-color="#fff"
+        bindchange="onPlayerCountChange"
+      />
+      <view class="count-range-label">
+        <text>4人</text><text>10人</text>
+      </view>
+
+      <!-- 角色数量调整 -->
+      <view class="divider"></view>
+      <text class="setup-label">角色配置</text>
+      <view class="role-config-row">
+        <view class="role-config-item wolf-bg">
+          <text class="role-config-icon">🐺</text>
+          <text class="role-config-name">狼人</text>
+          <view class="role-stepper">
+            <view class="stepper-btn" catchtap="changeRoleCount" data-role="wolf" data-delta="-1">−</view>
+            <text class="stepper-num">{{wolfCount}}</text>
+            <view class="stepper-btn" catchtap="changeRoleCount" data-role="wolf" data-delta="1">＋</view>
+          </view>
+        </view>
+        <view class="role-config-item prophet-bg">
+          <text class="role-config-icon">🔮</text>
+          <text class="role-config-name">预言家</text>
+          <view class="role-stepper">
+            <view class="stepper-btn" catchtap="changeRoleCount" data-role="prophet" data-delta="-1">−</view>
+            <text class="stepper-num">{{prophetCount}}</text>
+            <view class="stepper-btn" catchtap="changeRoleCount" data-role="prophet" data-delta="1">＋</view>
+          </view>
+        </view>
+        <view class="role-config-item villager-bg">
+          <text class="role-config-icon">🧑</text>
+          <text class="role-config-name">村民</text>
+          <text class="stepper-num villager-num">{{villagerCount}}</text>
+        </view>
+      </view>
+
+      <!-- 猜词时间 -->
+      <view class="divider"></view>
+      <text class="setup-label">猜词时间</text>
+      <view class="time-config-row">
+        <view class="stepper-btn time-btn" catchtap="changeTotalTime" data-delta="-30">−30s</view>
+        <view class="time-display">
+          <text class="time-num">{{totalTimeLabel}}</text>
+        </view>
+        <view class="stepper-btn time-btn" catchtap="changeTotalTime" data-delta="30">+30s</view>
+      </view>
+    </view>
+
+    <button class="btn-primary" bindtap="startGame">开始游戏</button>
+  </view>
+
+
+  <!-- ══════════════════════════════════════
+       阶段2：公布村长
+  ══════════════════════════════════════ -->
+  <view class="stage" wx:if="{{currentStep === 'announce-chief'}}">
+    <view class="stage-header">
+      <text class="stage-emoji">🎲</text>
+      <text class="stage-title">村长已选出！</text>
+    </view>
+
+    <view class="chief-announce-card">
+      <text class="chief-announce-label">本局村长</text>
+      <view class="chief-announce-num-row">
+        <text class="chief-announce-crown">👑</text>
+        <text class="chief-announce-num">{{chiefId + 1}}号玩家</text>
+      </view>
+      <text class="chief-announce-tip">村长负责守护咒语，只能回答"是"或"否"</text>
+    </view>
+
+    <button class="btn-primary" bindtap="confirmChief">
+      {{wolfCount === 0 && prophetCount === 0 ? '好的，村长去选词' : '好的，开始查看身份'}}
+    </button>
+  </view>
+
+
+  <!-- ══════════════════════════════════════
+       阶段3a：确认交给村长
+  ══════════════════════════════════════ -->
+  <view class="stage confirm-spell-stage" wx:if="{{currentStep === 'confirm-spell'}}">
+    <view class="confirm-spell-card">
+      <text class="confirm-spell-icon">🔒</text>
+      <text class="confirm-spell-title">身份查看完毕</text>
+      <text class="confirm-spell-desc">请将手机交给村长</text>
+      <view class="confirm-chief-badge">
+        <text class="confirm-chief-crown">👑</text>
+        <text class="confirm-chief-num">{{chiefId + 1}}号玩家</text>
+      </view>
+      <text class="confirm-spell-tip">其他人请勿看屏幕，村长独自选词</text>
+    </view>
+    <button class="btn-primary" bindtap="goChooseSpell">村长确认收到手机</button>
+  </view>
+
+
+  <!-- ══════════════════════════════════════
+       阶段3b：轮流查看身份
+  ══════════════════════════════════════ -->
+  <view class="stage" wx:if="{{currentStep === 'view-role'}}">
+    <view class="stage-header">
+      <text class="stage-emoji">🃏</text>
+      <text class="stage-title">查看你的身份</text>
+      <text class="stage-desc">请将手机依次传给每位玩家\n每人单独查看，不要让别人看到</text>
+    </view>
+
+    <view class="role-view-card">
+      <view class="role-view-num-row">
+        <text class="role-view-num">{{players[roleViewIndex].id + 1}}号玩家</text>
+        <text wx:if="{{players[roleViewIndex].isChief}}" class="chief-tag">👑 村长</text>
+      </view>
+
+      <view
+        class="role-box {{roleVisible ? 'visible role-box-' + (players[roleViewIndex].role === '狼人' ? 'wolf' : players[roleViewIndex].role === '预言家' ? 'prophet' : 'villager') : 'hidden'}}"
+        catchtouchstart="showRole"
+        catchtouchend="hideRole"
+        catchtouchcancel="hideRole"
+      >
+        <text wx:if="{{roleVisible}}" class="role-reveal-name">{{players[roleViewIndex].role}}</text>
+        <view wx:else class="spell-cover">
+          <text class="spell-cover-icon">👁</text>
+          <text class="spell-cover-text">按住查看身份</text>
+        </view>
+      </view>
+      <text class="spell-hint">松开后身份会自动隐藏</text>
+    </view>
+
+      <button class="btn-primary" bindtap="confirmRoleViewed">已查看</button>
+
+    <view class="view-progress">
+      <text class="view-progress-text">{{roleViewIndex + 1}} / {{players.length}}</text>
+      <view class="view-progress-bar">
+        <view class="view-progress-fill" style="width: {{(roleViewIndex + 1) / players.length * 100}}%"></view>
+      </view>
+    </view>
+  </view>
+
+
+  <!-- ══════════════════════════════════════
+       阶段3c：村长选咒语
+  ══════════════════════════════════════ -->
+  <view class="stage" wx:if="{{currentStep === 'choose-spell'}}">
+    <view class="stage-header">
+      <text class="stage-emoji">👑</text>
+      <view class="chief-badge">
+        <text>村长是</text>
+        <text class="chief-name">{{chiefId + 1}}号玩家</text>
+      </view>
+      <text class="stage-title">选择本局咒语</text>
+      <text class="stage-desc">请将手机交给村长\n从下面3个词中选一个作为咒语</text>
+    </view>
+
+    <view class="word-choices">
+      <view
+        class="word-card"
+        wx:for="{{wordChoices}}"
+        wx:key="*this"
+        data-word="{{item}}"
+        bindtap="chooseSpell"
+      >
+        <text class="word-text">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+
+  <!-- ══════════════════════════════════════
+       阶段4：角色查看咒语（四方向自动展示）
+  ══════════════════════════════════════ -->
+  <view class="stage view-spell-stage" wx:if="{{currentStep === 'view-spell'}}">
+    <view class="audio-hint" wx:if="{{audioHint}}">
+      <text class="audio-hint-text">{{audioHint}}</text>
+    </view>
+
+    <view wx:if="{{viewQueue.length > 0 && spellVisible}}" class="four-dir-container" style="top: {{statusBarHeight + 44}}px">
+      <view class="four-dir-item top">
+        <text class="four-dir-word">{{spell}}</text>
+      </view>
+      <view class="four-dir-item left">
+        <text class="four-dir-word">{{spell}}</text>
+      </view>
+      <view class="four-dir-center">
+        <text class="four-dir-countdown">{{spellCountdown}}</text>
+        <text class="four-dir-countdown-unit">秒</text>
+      </view>
+      <view class="four-dir-item right">
+        <text class="four-dir-word">{{spell}}</text>
+      </view>
+      <view class="four-dir-item bottom">
+        <text class="four-dir-word">{{spell}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{viewQueue.length > 0 && !spellVisible}}" class="spell-waiting">
+      <view class="stage-header">
+        <text class="stage-emoji">{{viewQueue[viewIndex].role === '狼人' ? '🐺' : '🔮'}}</text>
+        <text wx:if="{{viewQueue[viewIndex].isGroup}}" class="stage-title">请狼人查看</text>
+        <text wx:else class="stage-title">请预言家查看</text>
+        <view class="role-badge {{viewQueue[viewIndex].role === '狼人' ? 'wolf' : 'prophet'}}">
+          {{viewQueue[viewIndex].role}}
+        </view>
+      </view>
+      <view class="spell-waiting-tip">
+        <text class="spell-waiting-icon">📢</text>
+        <text class="spell-waiting-text">手机放到桌子中央\n咒语即将自动显示</text>
+      </view>
+      <view class="view-progress">
+        <text class="view-progress-text">{{viewIndex + 1}} / {{viewQueue.length}}</text>
+        <view class="view-progress-bar">
+          <view class="view-progress-fill" style="width: {{(viewIndex + 1) / viewQueue.length * 100}}%"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+
+  <!-- ══════════════════════════════════════
+       阶段5：倒计时
+  ══════════════════════════════════════ -->
+  <view class="stage" wx:if="{{currentStep === 'countdown'}}">
+    <view class="stage-header">
+      <text class="stage-emoji">⏱️</text>
+      <text class="stage-title">开始提问！</text>
+      <text class="stage-desc">所有人向村长提问，尝试猜出咒语</text>
+    </view>
+
+    <view class="countdown-area">
+      <view class="countdown-ring">
+        <text class="countdown-num">{{remainTime}}</text>
+        <text class="countdown-unit">秒</text>
+      </view>
+      <view class="countdown-track">
+        <view class="countdown-track-fill" style="width: {{remainTime / totalTime * 100}}%"></view>
+      </view>
+    </view>
+
+    <view class="countdown-tip">
+      <text class="countdown-tip-text">💡 向村长提问来猜出咒语词语</text>
+      <text class="countdown-tip-text">村长只能回答是或否</text>
+    </view>
+
+    <button class="btn-success" bindtap="villagerGuessed">🎉 有人猜出了咒语！</button>
+  </view>
+
+
+  <!-- ══════════════════════════════════════
+       阶段6：投票环节
+  ══════════════════════════════════════ -->
+  <view class="stage vote-stage" wx:if="{{currentStep === 'vote'}}">
+
+    <!-- 说明卡片 -->
+    <view class="vote-info-card {{voteType === 'find-prophet' ? 'wolf-theme' : 'villager-theme'}}">
+      <text class="vote-info-emoji">{{voteType === 'find-prophet' ? '🐺' : '🧑'}}</text>
+      <text class="vote-info-title">{{voteType === 'find-prophet' ? '狼人阵营，指出预言家！' : '村民阵营，找出狼人！'}}</text>
+      <text class="vote-info-desc">{{voteType === 'find-prophet' ? '狼人可透露身份\n讨论后同时指出你认为的预言家' : '所有人可自称任意身份\n讨论后同时指出你认为的狼人\n平票且其中一人是狼人，村民也获胜'}}</text>
+    </view>
+
+    <!-- 倒计时 -->
+    <view class="vote-countdown-wrap {{voteCountdownAlert ? 'alert' : ''}}">
+      <text class="vote-countdown-num {{voteCountdownAlert ? 'alert' : ''}}">{{voteCountdown}}</text>
+      <text class="vote-countdown-unit">秒</text>
+    </view>
+
+    <!-- 投票结果按钮 -->
+    <view class="vote-btns" wx:if="{{voteCountdown === 0}}">
+      <text class="vote-btns-label">投票结果</text>
+      <button class="btn-success vote-btn" bindtap="voteHit">
+        {{voteType === 'find-prophet' ? '✅ 投中了预言家' : '✅ 投中了狼人'}}
+      </button>
+      <button wx:if="{{voteType === 'find-wolf'}}" class="btn-primary vote-btn" bindtap="voteTieWithWolf">
+        ⚖️ 平票，其中一人是狼人
+      </button>
+      <button class="btn-wolf vote-btn" bindtap="voteMiss">
+        {{voteType === 'find-prophet' ? '❌ 没有投中预言家' : '❌ 没有投中狼人'}}
+      </button>
+    </view>
+
+  </view>
+
+
+  <!-- ══════════════════════════════════════
+       阶段7：游戏结果
+  ══════════════════════════════════════ -->
+  <view class="stage" wx:if="{{currentStep === 'result'}}">
+    <view class="result-header {{villagerWin ? 'win' : 'lose'}}">
+      <text class="result-emoji">{{villagerWin ? '🎊' : '🐺'}}</text>
+      <text class="result-title">{{villagerWin ? '村民方胜利！' : '狼人方胜利！'}}</text>
+      <text class="result-subtitle">
+        {{finalWinner === 'villager' && voteType === 'find-prophet' ? '预言家成功隐藏身份！' :
+          finalWinner === 'wolf' && voteType === 'find-prophet' ? '狼人揪出了预言家！' :
+          finalWinner === 'villager' && voteType === 'find-wolf' ? '狼人身份被识破！' :
+          finalWinner === 'wolf' && voteType === 'find-wolf' ? '狼人成功隐匿！' :
+          villagerWin ? '咒语被识破了！' : '无人猜出咒语……'}}
+      </text>
+    </view>
+
+    <view class="spell-reveal-result">
+      <text class="spell-reveal-label">本局咒语</text>
+      <text class="spell-reveal-word">{{spell}}</text>
+    </view>
+
+    <view class="player-list">
+      <text class="player-list-title">玩家身份揭晓</text>
+      <view class="player-item" wx:for="{{players}}" wx:key="id">
+        <view class="player-item-left">
+          <text class="player-item-num">{{item.id + 1}}号</text>
+          <text wx:if="{{item.isChief}}" class="chief-tag">村长</text>
+        </view>
+        <view class="player-item-role role-{{item.role === '狼人' ? 'wolf' : item.role === '预言家' ? 'prophet' : 'villager'}}">
+          <text>{{item.role === '狼人' ? '🐺' : item.role === '预言家' ? '🔮' : '🧑'}} {{item.role}}</text>
+        </view>
+      </view>
+    </view>
+
+    <button class="btn-primary" bindtap="restartGame">🔄 再来一局</button>
+  </view>
+
+</view>

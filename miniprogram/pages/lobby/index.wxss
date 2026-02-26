@@ -1,0 +1,90 @@
+.lobby-page {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+  padding: 40rpx 32rpx;
+  box-sizing: border-box;
+}
+
+.lobby-header {
+  padding: 60rpx 0 48rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.lobby-title {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 4rpx;
+}
+
+.lobby-subtitle {
+  margin-top: 16rpx;
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.55);
+}
+
+/* 游戏卡片 */
+.game-list {
+  display: flex;
+  flex-direction: column;
+  gap: 28rpx;
+}
+
+.game-card {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.07);
+  border: 1rpx solid rgba(255,255,255,0.12);
+  border-radius: 24rpx;
+  padding: 36rpx 32rpx;
+  gap: 28rpx;
+  transition: all 0.2s;
+}
+
+.game-card:active {
+  background: rgba(255,255,255,0.14);
+  transform: scale(0.98);
+}
+
+.game-card-emoji {
+  font-size: 72rpx;
+  width: 96rpx;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.game-card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+}
+
+.game-card-name {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.game-card-desc {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.5;
+}
+
+.game-card-players {
+  font-size: 22rpx;
+  color: #e94560;
+  background: rgba(233,69,96,0.15);
+  border-radius: 20rpx;
+  padding: 4rpx 16rpx;
+  align-self: flex-start;
+}
+
+.game-card-arrow {
+  color: rgba(255,255,255,0.3);
+  font-size: 28rpx;
+  flex-shrink: 0;
+}
