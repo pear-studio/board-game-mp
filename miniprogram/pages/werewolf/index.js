@@ -9,6 +9,7 @@ const AUDIO = {
   PROPHET_WAKE:   '/audio/prophet_wake.mp3',    // 预言家醒过来，查看咒语
   PROPHET_SLEEP:  '/audio/prophet_sleep.mp3',   // 预言家请闭眼
   OPEN_EYES:      '/audio/open_eyes.mp3',       // 所有人睁眼，游戏开始
+  BEEP:           '/audio/beep.mp3',            // 倒计时警报音
 };
 
 // 咒语展示倒计时（秒）：给狼人/预言家自动展示词语的时间
@@ -56,6 +57,18 @@ Page({
     // 存到实例上，onUnload 时可一并清理
     if (!this._delayTimers) this._delayTimers = [];
     this._delayTimers.push(t);
+  },
+
+  /**
+   * 播放一次 beep 音效，与主音频通道相互独立，播完自动销毁
+   * 倒计时最后3秒专用
+   */
+  _playBeep() {
+    const ctx = wx.createInnerAudioContext();
+    ctx.src = AUDIO.BEEP;
+    ctx.onEnded(() => { try { ctx.destroy(); } catch (e) {} });
+    ctx.onError(() => { try { ctx.destroy(); } catch (e) {} });
+    ctx.play();
   },
 
   _playAudio(src, onEnd) {
@@ -111,6 +124,7 @@ Page({
     // 倒计时阶段
     remainTime: 120,
     startTimestamp: 0,
+    countdownAlert: false,  // 最后3秒闪烁
 
     // 结果阶段
     villagerWin: false,
@@ -470,8 +484,19 @@ Page({
       const { totalTime, startTimestamp } = this.data;
       const elapsed = Math.floor((Date.now() - startTimestamp) / 1000);
       const remainTime = Math.max(0, totalTime - elapsed);
-      this.setData({ remainTime });
+      const countdownAlert = remainTime <= 3 && remainTime > 0;
+      this.setData({ remainTime, countdownAlert });
+      // 最后3秒：每秒 beep 音效 + 短震动
+      if (countdownAlert) {
+        this._playBeep();
+        wx.vibrateShort({ type: 'heavy' });
+      }
+      // 最后1秒：长震动
+      if (remainTime === 1) {
+        wx.vibrateLong();
+      }
       if (remainTime <= 0) {
+        this.setData({ countdownAlert: false });
         this._stopTimer();
         this._onCountdownEnd();
       }
@@ -559,12 +584,14 @@ Page({
       if (cd <= 0) {
         this._stopVoteTimer();
         this.setData({ voteCountdown: 0, voteCountdownAlert: false });
-        // 投票时间到，自动进入投票结果输入
+        wx.vibrateLong();
       } else {
-        this.setData({
-          voteCountdown: cd,
-          voteCountdownAlert: cd <= 3,
-        });
+        const voteCountdownAlert = cd <= 3;
+        this.setData({ voteCountdown: cd, voteCountdownAlert });
+        if (voteCountdownAlert) {
+          this._playBeep();
+          wx.vibrateShort({ type: 'heavy' });
+        }
       }
     }, 1000);
   },

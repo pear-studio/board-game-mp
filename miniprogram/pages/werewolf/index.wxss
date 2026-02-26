@@ -335,11 +335,23 @@
   gap: 0;
 }
 
+.countdown-ring.alert {
+  background: rgba(233,69,96,0.25);
+  border-color: #ff2244;
+  animation: vote-pulse 0.6s ease-in-out infinite alternate;
+}
+
 .countdown-num {
   font-size: 120rpx;
   font-weight: 700;
   color: #e94560;
   line-height: 1;
+  transition: font-size 0.2s, color 0.2s;
+}
+
+.countdown-num.alert {
+  font-size: 160rpx;
+  color: #ff2244;
 }
 
 .countdown-unit {

@@ -318,10 +318,10 @@
     </view>
 
     <view class="countdown-area">
-      <view class="countdown-ring">
-        <text class="countdown-num">{{remainTime}}</text>
-        <text class="countdown-unit">秒</text>
-      </view>
+    <view class="countdown-ring {{countdownAlert ? 'alert' : ''}}">
+      <text class="countdown-num {{countdownAlert ? 'alert' : ''}}">{{remainTime}}</text>
+      <text class="countdown-unit">秒</text>
+    </view>
       <view class="countdown-track">
         <view class="countdown-track-fill" style="width: {{remainTime / totalTime * 100}}%"></view>
       </view>
