@@ -139,6 +139,19 @@
         </view>
         <view class="stepper-btn time-btn" catchtap="changeTotalTime" data-delta="30">+30s</view>
       </view>
+
+      <!-- 词库设置入口 -->
+      <view class="divider"></view>
+      <view class="wordbank-entry" bindtap="goWordbankSettings">
+        <view class="wordbank-entry-left">
+          <text class="wordbank-entry-icon">📚</text>
+          <text class="wordbank-entry-label">词库设置</text>
+        </view>
+        <view class="wordbank-entry-right">
+          <text class="wordbank-entry-hint">已选 {{selectedCategories.length}} 个分类</text>
+          <text class="wordbank-entry-arrow">›</text>
+        </view>
+      </view>
     </view>
 
     <button class="btn-primary" bindtap="startGame">开始游戏</button>

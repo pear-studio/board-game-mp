@@ -1,5 +1,9 @@
 // pages/werewolf/index.js
-const { getRandomWords } = require('../../data/wordbank');
+const { getRandomWords, CATEGORIES, DEFAULT_SELECTED } = require('../../data/wordbank');
+
+// storage key
+const STORAGE_KEY_CATEGORIES = 'wordbank_selected_categories';
+const STORAGE_KEY_SUBSCRIPTIONS = 'wordbank_subscriptions';
 
 // 语音文件映射
 const AUDIO = {
@@ -160,6 +164,40 @@ Page({
     // 右侧内容区域终止于胶囊左侧，留 8px 间距
     const navRightPadding = wx.getSystemInfoSync().windowWidth - menuBtn.left + 8;
     this.setData({ statusBarHeight, navBarHeight, navRightPadding });
+    // 初始化词库选择（storage 无记录时写入默认值）
+    this._initSelectedCategories();
+  },
+
+  onShow() {
+    if (this.data.currentStep === STEPS.COUNTDOWN && this.data.startTimestamp) {
+      const { totalTime, startTimestamp } = this.data;
+      const elapsed = Math.floor((Date.now() - startTimestamp) / 1000);
+      const remainTime = Math.max(0, totalTime - elapsed);
+      if (remainTime <= 0) {
+        this.setData({ remainTime: 0 });
+        this._onCountdownEnd();
+      } else {
+        this.setData({ remainTime });
+        this._startTimer();
+      }
+    }
+    // 从词库设置页返回时刷新已选分类
+    this._initSelectedCategories();
+  },
+
+  /** 读取已选分类，首次无记录时写入默认值 */
+  _initSelectedCategories() {
+    let selected = wx.getStorageSync(STORAGE_KEY_CATEGORIES);
+    if (!selected || !selected.length) {
+      selected = DEFAULT_SELECTED;
+      wx.setStorageSync(STORAGE_KEY_CATEGORIES, selected);
+    }
+    this.setData({ selectedCategories: selected });
+  },
+
+  /** 跳转词库设置页 */
+  goWordbankSettings() {
+    wx.navigateTo({ url: '/pages/wordbank-settings/index' });
   },
 
   // ─── 规则弹窗 & 重置 ────────────────────────────────────
@@ -259,8 +297,16 @@ Page({
       isChief: i === chiefId,
     }));
 
-    // 随机3个词供村长选
-    const wordChoices = getRandomWords(3);
+    // 读取已选分类 + 订阅词库缓存，抽取3个候选词
+    const selectedCategories = wx.getStorageSync(STORAGE_KEY_CATEGORIES) || DEFAULT_SELECTED;
+    const subscriptions = wx.getStorageSync(STORAGE_KEY_SUBSCRIPTIONS) || [];
+    // 取已勾选的订阅词库词条（storage 中每条订阅含 words 字段）
+    const customWords = subscriptions
+      .filter(s => selectedCategories.includes(s.id) && s.words && s.words.length)
+      .map(s => s.words);
+    const wordChoices = getRandomWords(3, selectedCategories.filter(id =>
+      CATEGORIES.some(c => c.id === id)
+    ), customWords);
 
     // 先公布村长
     this.setData({
@@ -513,21 +559,6 @@ Page({
   // 小程序切换后台时修正计时
   onHide() {
     this._stopTimer();
-  },
-
-  onShow() {
-    if (this.data.currentStep === STEPS.COUNTDOWN && this.data.startTimestamp) {
-      const { totalTime, startTimestamp } = this.data;
-      const elapsed = Math.floor((Date.now() - startTimestamp) / 1000);
-      const remainTime = Math.max(0, totalTime - elapsed);
-      if (remainTime <= 0) {
-        this.setData({ remainTime: 0 });
-        this._onCountdownEnd();
-      } else {
-        this.setData({ remainTime });
-        this._startTimer();
-      }
-    }
   },
 
   onUnload() {

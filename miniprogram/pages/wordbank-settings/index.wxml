@@ -1,0 +1,99 @@
+<!--  pages/wordbank-settings/index.wxml  -->
+<view class="ws-page">
+
+  <!-- 自定义导航栏 -->
+  <view class="custom-nav" style="padding-top: {{statusBarHeight}}px">
+    <view class="custom-nav-bar" style="height: {{navBarHeight}}px; padding-right: {{navRightPadding}}px">
+      <navigator class="nav-back" open-type="navigateBack">‹</navigator>
+      <text class="nav-title">词库设置</text>
+      <view class="nav-placeholder"></view>
+    </view>
+  </view>
+  <view style="height: {{statusBarHeight + navBarHeight}}px"></view>
+
+  <!-- Toast 提示 -->
+  <view class="ws-toast" wx:if="{{toast}}">
+    <text class="ws-toast-text">{{toast}}</text>
+  </view>
+
+  <!-- ────── 内置词库 ────── -->
+  <view class="section-title">内置词库</view>
+
+  <view class="group-block" wx:for="{{groups}}" wx:key="difficulty">
+    <!-- 分组标题行 -->
+    <view class="group-header" bindtap="toggleGroup" data-difficulty="{{item.difficulty}}">
+      <view class="group-title-wrap">
+        <view class="difficulty-badge diff-{{item.difficulty}}">{{item.label}}</view>
+        <text class="group-count">{{item.categories.length}} 个分类</text>
+      </view>
+      <view class="group-toggle-btn">
+        <text class="group-toggle-text">全选</text>
+      </view>
+    </view>
+
+    <!-- 分类列表 -->
+    <view class="category-list">
+      <view
+        class="category-item {{cat.checked ? 'checked' : ''}}"
+        wx:for="{{item.categories}}"
+        wx:for-item="cat"
+        wx:key="id"
+        bindtap="toggleCategory"
+        data-id="{{cat.id}}"
+      >
+        <view class="cat-info">
+          <text class="cat-name">{{cat.name}}</text>
+          <text class="cat-count">{{cat.words.length}}词</text>
+        </view>
+        <view class="checkbox {{cat.checked ? 'checked' : ''}}">
+          <text wx:if="{{cat.checked}}" class="check-mark">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ────── 自定义词库 ────── -->
+  <view class="section-title" style="margin-top: 48rpx">自定义词库</view>
+
+  <!-- 订阅列表 -->
+  <view class="sub-list" wx:if="{{subscriptions.length > 0}}">
+    <view class="sub-item" wx:for="{{subscriptions}}" wx:key="id">
+      <view class="sub-switch" bindtap="toggleSubscription" data-id="{{item.id}}">
+        <view class="switch-track {{selectedIds.indexOf(item.id) >= 0 ? 'on' : 'off'}}">
+          <view class="switch-thumb {{selectedIds.indexOf(item.id) >= 0 ? 'on' : 'off'}}"></view>
+        </view>
+      </view>
+      <view class="sub-info">
+        <text class="sub-name">{{item.name}}</text>
+        <text class="sub-meta">{{item.wordCount}}词 · 码：{{item.shareCode}}</text>
+      </view>
+      <view class="sub-del" catchtap="unsubscribe" data-id="{{item.id}}">✕</view>
+    </view>
+  </view>
+  <view class="sub-empty" wx:else>
+    <text class="sub-empty-text">还没有订阅任何自定义词库</text>
+  </view>
+
+  <!-- 输入分享码订阅 -->
+  <view class="subscribe-bar">
+    <input
+      class="code-input"
+      placeholder="输入6位分享码"
+      placeholder-class="code-input-placeholder"
+      value="{{inputShareCode}}"
+      bindinput="onShareCodeInput"
+      maxlength="8"
+      auto-blur
+    />
+    <view class="btn-subscribe {{loading ? 'disabled' : ''}}" catchtap="subscribeByCode">
+      <text>{{loading ? '…' : '订阅'}}</text>
+    </view>
+  </view>
+
+  <!-- 创建词库按钮 -->
+  <view class="create-btn-wrap">
+    <button class="btn-create" bindtap="goCreateWordbank">✏️ 创建并分享词库</button>
+  </view>
+
+  <view style="height: 80rpx"></view>
+</view>
