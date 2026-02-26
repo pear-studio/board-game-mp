@@ -32,6 +32,30 @@
       />
     </view>
 
+    <!-- 创建者昵称 + 允许编辑 -->
+    <view class="field-card">
+      <text class="field-label">创建者昵称</text>
+      <input
+        class="field-input"
+        placeholder="选填，显示给订阅者看（最多10字）"
+        placeholder-class="field-placeholder"
+        value="{{creatorName}}"
+        bindinput="onCreatorNameInput"
+        maxlength="10"
+      />
+      <view class="field-row-switch">
+        <view class="field-switch-label">
+          <text class="field-switch-title">允许他人编辑</text>
+          <text class="field-switch-desc">开启后，订阅者可提交新词条</text>
+        </view>
+        <view class="cw-switch" catchtap="toggleAllowEdit">
+          <view class="switch-track {{allowEdit ? 'on' : 'off'}}">
+            <view class="switch-thumb"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
     <!-- 添加词条 -->
     <view class="field-card">
       <view class="field-label-row">

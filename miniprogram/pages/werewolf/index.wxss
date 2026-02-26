@@ -20,12 +20,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16rpx;
-  padding: 48rpx 0 24rpx;
+  gap: 12rpx;
+  padding: 16rpx 0 8rpx;
 }
 
 .stage-emoji {
-  font-size: 96rpx;
+  font-size: 72rpx;
 }
 
 .stage-title {
@@ -75,6 +75,49 @@
 
 .btn-success:active {
   opacity: 0.85;
+}
+
+/* ── 设置页标题行 ──────────────────────── */
+.setup-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.setup-title-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  flex: 1;
+}
+
+.setup-game-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.setup-game-desc {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.5;
+}
+
+.setup-rules-btn {
+  flex-shrink: 0;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #e94560;
+  background: rgba(233,69,96,0.12);
+  border: 1rpx solid rgba(233,69,96,0.4);
+  border-radius: 28rpx;
+  padding: 10rpx 28rpx;
+  white-space: nowrap;
+}
+
+.setup-rules-btn:active {
+  background: rgba(233,69,96,0.25);
 }
 
 /* ── 阶段1：设置 ───────────────────────── */

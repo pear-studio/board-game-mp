@@ -116,41 +116,104 @@
   color: rgba(255,255,255,0.65);
 }
 
-/* ── 分类列表 ─── */
+/* ── 统一行样式（内置分类 & 自定义词库共用）─── */
 .category-list {
-  padding: 8rpx 16rpx 12rpx;
+  padding: 8rpx 12rpx 12rpx;
 }
 
-.category-item {
+/* 内置分类容器 & 自定义词库容器共用此行 */
+.item-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 22rpx 16rpx;
+  padding: 18rpx 12rpx;
   border-radius: 16rpx;
-  margin-bottom: 4rpx;
-  transition: background 0.15s;
+  margin-bottom: 2rpx;
+  gap: 0;
 }
 
-.category-item.checked {
-  background: rgba(233,69,96,0.12);
-}
+.item-row:last-child { margin-bottom: 0; }
 
-.cat-info {
+/* 左：眼睛按钮 */
+.item-eye {
+  width: 64rpx;
+  height: 64rpx;
   display: flex;
   align-items: center;
-  gap: 16rpx;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  margin-right: 16rpx;
 }
 
-.cat-name {
+.item-eye:active { background: rgba(255,255,255,0.12); }
+
+.eye-icon {
+  font-size: 30rpx;
+  color: rgba(255,255,255,0.45);
+  line-height: 1;
+}
+
+/* 中：信息区 */
+.item-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+  min-width: 0;
+}
+
+.item-name-row {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.item-name {
   font-size: 30rpx;
   font-weight: 600;
   color: rgba(255,255,255,0.9);
 }
 
-.cat-count {
+.item-count {
   font-size: 22rpx;
-  color: rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.38);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
+
+/* 右：内置词库用 checkbox */
+.item-check {
+  flex-shrink: 0;
+  padding: 8rpx;
+}
+
+/* 右：自定义词库用 Switch + 删除横排 */
+.item-actions {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex-shrink: 0;
+}
+
+.item-switch { flex-shrink: 0; }
+
+.item-del {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  border: 1rpx solid rgba(255,255,255,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.4);
+  flex-shrink: 0;
+}
+
+.item-del:active { background: rgba(233,69,96,0.2); color: #e94560; }
 
 .checkbox {
   width: 44rpx;
@@ -180,19 +243,30 @@
   border-radius: 24rpx;
   overflow: hidden;
   margin-bottom: 16rpx;
+  border: 1rpx solid rgba(255,255,255,0.1);
 }
 
-.sub-item {
-  display: flex;
-  align-items: center;
-  padding: 28rpx 24rpx;
-  border-bottom: 1rpx solid rgba(255,255,255,0.07);
-  gap: 16rpx;
+/* 自定义词库列表内，item-row 之间加分割线 */
+.sub-list .item-row {
+  border-bottom: 1rpx solid rgba(255,255,255,0.06);
+  border-radius: 0;
 }
 
-.sub-item:last-child { border-bottom: none; }
+.sub-list .item-row:last-child { border-bottom: none; }
 
-.sub-switch { flex-shrink: 0; }
+/* badge 复用 */
+.sub-badge {
+  font-size: 20rpx;
+  padding: 2rpx 12rpx;
+  border-radius: 10rpx;
+  flex-shrink: 0;
+}
+
+.sub-badge.edit {
+  background: rgba(52,152,219,0.25);
+  color: #85c1e9;
+  border: 1rpx solid rgba(52,152,219,0.4);
+}
 
 .switch-track {
   width: 88rpx;
@@ -203,6 +277,7 @@
   padding: 0 6rpx;
   box-sizing: border-box;
   transition: background 0.2s;
+  position: relative;
 }
 .switch-track.on  { background: #e94560; justify-content: flex-end; }
 .switch-track.off { background: rgba(255,255,255,0.15); justify-content: flex-start; }
@@ -212,48 +287,149 @@
   height: 36rpx;
   border-radius: 50%;
   background: #fff;
-}
-
-.sub-info {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6rpx;
-}
-
-.sub-name {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: rgba(255,255,255,0.9);
-}
-
-.sub-meta {
-  font-size: 22rpx;
-  color: rgba(255,255,255,0.4);
-}
-
-.sub-del {
-  width: 56rpx;
-  height: 56rpx;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26rpx;
-  color: rgba(255,255,255,0.5);
   flex-shrink: 0;
 }
 
 .sub-empty {
-  padding: 40rpx 0;
+  background: rgba(255,255,255,0.04);
+  border: 1rpx solid rgba(255,255,255,0.08);
+  border-radius: 24rpx;
+  padding: 48rpx 0;
   text-align: center;
+  margin-bottom: 16rpx;
 }
 
 .sub-empty-text {
   font-size: 26rpx;
   color: rgba(255,255,255,0.3);
 }
+
+/* ── 词条预览弹窗 ─── */
+.words-modal-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.65);
+  z-index: 500;
+  display: flex;
+  align-items: flex-end;
+}
+
+.words-modal {
+  width: 100%;
+  max-height: 75vh;
+  background: #16213e;
+  border-radius: 32rpx 32rpx 0 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.words-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx 36rpx 24rpx;
+  border-bottom: 1rpx solid rgba(255,255,255,0.08);
+  flex-shrink: 0;
+}
+
+.words-modal-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.words-modal-close {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.7);
+}
+
+.words-modal-body {
+  flex: 1;
+  padding: 24rpx 32rpx 16rpx;
+  overflow-y: auto;
+}
+
+.words-preview-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+  margin-bottom: 24rpx;
+}
+
+.word-preview-tag {
+  background: rgba(255,255,255,0.1);
+  border: 1rpx solid rgba(255,255,255,0.15);
+  border-radius: 14rpx;
+  padding: 10rpx 24rpx;
+}
+
+.word-preview-text {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.85);
+}
+
+.words-modal-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  padding: 16rpx 0 8rpx;
+  border-top: 1rpx solid rgba(255,255,255,0.07);
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.4);
+}
+
+.words-modal-footer {
+  padding: 16rpx 32rpx 40rpx;
+  flex-shrink: 0;
+  border-top: 1rpx solid rgba(255,255,255,0.08);
+}
+
+/* footer 里：分享码按钮（左）+ 删除按钮（右）横排 */
+.modal-footer-row {
+  display: flex;
+  gap: 16rpx;
+  align-items: center;
+}
+
+.btn-copy-code {
+  flex: 1;
+  background: rgba(233,69,96,0.12);
+  border: 1rpx solid rgba(233,69,96,0.4);
+  border-radius: 20rpx;
+  padding: 22rpx 0;
+  text-align: center;
+}
+
+.btn-copy-code text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #e94560;
+  letter-spacing: 2rpx;
+}
+
+.btn-del-code {
+  background: rgba(255,255,255,0.06);
+  border: 1rpx solid rgba(255,255,255,0.15);
+  border-radius: 20rpx;
+  padding: 22rpx 32rpx;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.btn-del-code text {
+  font-size: 28rpx;
+  color: rgba(255,100,100,0.8);
+}
+
+.btn-del-code:active { background: rgba(233,69,96,0.15); }
 
 /* ── 分享码输入 ─── */
 .subscribe-bar {

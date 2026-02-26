@@ -22,7 +22,7 @@ function genCode() {
 
 exports.main = async (event, context) => {
   const { OPENID } = cloud.getWXContext();
-  const { name, words } = event;
+  const { name, words, creatorName = '', allowEdit = false } = event;
 
   // ── 基础校验 ───────────────────────────────
   if (!name || typeof name !== 'string' || !name.trim()) {
@@ -85,6 +85,8 @@ exports.main = async (event, context) => {
       words: cleaned,
       shareCode,
       creatorOpenId: OPENID,
+      creatorName: String(creatorName).trim().slice(0, 10),
+      allowEdit: !!allowEdit,
       createdAt: now,
       updatedAt: now,
     },

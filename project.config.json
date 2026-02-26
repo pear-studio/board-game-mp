@@ -1,6 +1,7 @@
 {
   "miniprogramRoot": "miniprogram/",
   "cloudfunctionRoot": "cloudfunctions/",
+  "cloudbaseEnv": "board-game-6g6bcx73f538cbd0",
   "setting": {
     "urlCheck": true,
     "es6": true,

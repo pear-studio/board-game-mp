@@ -16,6 +16,39 @@
     <text class="ws-toast-text">{{toast}}</text>
   </view>
 
+  <!-- 词条查看弹窗 -->
+  <view class="words-modal-mask" wx:if="{{showWordsModal}}" bindtap="closeWordsModal">
+    <view class="words-modal" catchtap="">
+      <view class="words-modal-header">
+        <text class="words-modal-title">「{{previewSub.name}}」词条</text>
+        <view class="words-modal-close" bindtap="closeWordsModal">✕</view>
+      </view>
+      <scroll-view scroll-y class="words-modal-body">
+        <view class="words-preview-grid">
+          <view class="word-preview-tag" wx:for="{{previewSub.words}}" wx:key="*this">
+            <text class="word-preview-text">{{item}}</text>
+          </view>
+        </view>
+        <view class="words-modal-meta">
+          <text>共 {{previewSub.wordCount}} 个词条</text>
+          <text wx:if="{{previewSub.creatorName}}">创建者：{{previewSub.creatorName}}</text>
+          <text wx:if="{{previewSub.allowEdit}}">允许编辑</text>
+        </view>
+      </scroll-view>
+      <!-- 仅自定义词库显示分享码 + 删除 -->
+      <view class="words-modal-footer" wx:if="{{previewSub.shareCode}}">
+        <view class="modal-footer-row">
+          <view class="btn-copy-code" catchtap="copyCodeFromModal">
+            <text>⎘  {{previewSub.shareCode}}</text>
+          </view>
+          <view class="btn-del-code" catchtap="unsubscribeFromModal">
+            <text>删除</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
   <!-- ────── 内置词库 ────── -->
   <view class="section-title">内置词库</view>
 
@@ -34,40 +67,56 @@
     <!-- 分类列表 -->
     <view class="category-list">
       <view
-        class="category-item {{cat.checked ? 'checked' : ''}}"
+        class="item-row"
         wx:for="{{item.categories}}"
         wx:for-item="cat"
         wx:key="id"
         bindtap="toggleCategory"
         data-id="{{cat.id}}"
       >
-        <view class="cat-info">
-          <text class="cat-name">{{cat.name}}</text>
-          <text class="cat-count">{{cat.words.length}}词</text>
+        <!-- 左：预览眼睛（阻止冒泡，不触发行选中） -->
+        <view class="item-eye" catchtap="previewBuiltin" data-id="{{cat.id}}">
+          <text class="eye-icon">◉</text>
         </view>
-        <view class="checkbox {{cat.checked ? 'checked' : ''}}">
-          <text wx:if="{{cat.checked}}" class="check-mark">✓</text>
+        <!-- 中：名称 + 词数 -->
+        <view class="item-info">
+          <text class="item-name">{{cat.name}}</text>
+          <text class="item-count">{{cat.words.length}}词</text>
+        </view>
+        <!-- 右：checkbox（视觉展示） -->
+        <view class="item-check">
+          <view class="checkbox {{cat.checked ? 'checked' : ''}}">
+            <text wx:if="{{cat.checked}}" class="check-mark">✓</text>
+          </view>
         </view>
       </view>
     </view>
   </view>
 
   <!-- ────── 自定义词库 ────── -->
-  <view class="section-title" style="margin-top: 48rpx">自定义词库</view>
+  <view class="section-title" style="margin-top: 40rpx">自定义词库</view>
 
   <!-- 订阅列表 -->
   <view class="sub-list" wx:if="{{subscriptions.length > 0}}">
-    <view class="sub-item" wx:for="{{subscriptions}}" wx:key="id">
-      <view class="sub-switch" bindtap="toggleSubscription" data-id="{{item.id}}">
-        <view class="switch-track {{selectedIds.indexOf(item.id) >= 0 ? 'on' : 'off'}}">
-          <view class="switch-thumb {{selectedIds.indexOf(item.id) >= 0 ? 'on' : 'off'}}"></view>
+    <view class="item-row" wx:for="{{subscriptions}}" wx:key="id" bindtap="toggleSubscription" data-id="{{item.id}}">
+      <!-- 左：眼睛预览（阻止冒泡，不触发行选中） -->
+      <view class="item-eye" catchtap="previewWords" data-index="{{index}}">
+        <text class="eye-icon">◉</text>
+      </view>
+      <!-- 中：名称 + meta -->
+      <view class="item-info">
+        <view class="item-name-row">
+          <text class="item-name">{{item.name}}</text>
+          <text wx:if="{{item.allowEdit}}" class="sub-badge edit">可编辑</text>
+        </view>
+        <text class="item-count">{{item.wordCount}}词 · {{item.shareCode}}<text wx:if="{{item.creatorName}}"> · {{item.creatorName}}</text></text>
+      </view>
+      <!-- 右：checkbox（视觉展示，点击由行级事件处理） -->
+      <view class="item-check">
+        <view class="checkbox {{item.checked ? 'checked' : ''}}">
+          <text wx:if="{{item.checked}}" class="check-mark">✓</text>
         </view>
       </view>
-      <view class="sub-info">
-        <text class="sub-name">{{item.name}}</text>
-        <text class="sub-meta">{{item.wordCount}}词 · 码：{{item.shareCode}}</text>
-      </view>
-      <view class="sub-del" catchtap="unsubscribe" data-id="{{item.id}}">✕</view>
     </view>
   </view>
   <view class="sub-empty" wx:else>
@@ -92,7 +141,7 @@
 
   <!-- 创建词库按钮 -->
   <view class="create-btn-wrap">
-    <button class="btn-create" bindtap="goCreateWordbank">✏️ 创建并分享词库</button>
+    <button class="btn-create" bindtap="goCreateWordbank">创建并分享词库</button>
   </view>
 
   <view style="height: 80rpx"></view>

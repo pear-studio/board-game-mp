@@ -11,6 +11,10 @@ Page({
   data: {
     // 词库名称
     name: '',
+    // 创建者昵称（选填）
+    creatorName: '',
+    // 是否允许他人编辑
+    allowEdit: false,
     // 当前输入词
     inputWord: '',
     // 已添加的词列表
@@ -44,6 +48,14 @@ Page({
   onNameInput(e) {
     const name = e.detail.value.slice(0, MAX_NAME_LEN);
     this.setData({ name });
+  },
+
+  onCreatorNameInput(e) {
+    this.setData({ creatorName: e.detail.value.slice(0, 10) });
+  },
+
+  toggleAllowEdit() {
+    this.setData({ allowEdit: !this.data.allowEdit });
   },
 
   onWordInput(e) {
@@ -93,9 +105,17 @@ Page({
 
     this.setData({ submitting: true });
 
+    const { creatorName, allowEdit } = this.data;
+
     wx.cloud.callFunction({
       name: 'wordbankSave',
-      data: { name: name.trim(), words },
+      config: { env: 'board-game-6g6bcx73f538cbd0' },
+      data: {
+        name: name.trim(),
+        words,
+        creatorName: creatorName.trim(),
+        allowEdit,
+      },
     }).then(res => {
       const { code, shareCode, error } = res.result || {};
       if (code !== 0) {
@@ -113,6 +133,8 @@ Page({
         shareCode,
         words,
         wordCount: words.length,
+        creatorName: creatorName.trim(),
+        allowEdit,
         subscribedAt: Date.now(),
       });
       wx.setStorageSync(STORAGE_KEY_SUBSCRIPTIONS, subs);
@@ -122,6 +144,7 @@ Page({
         wx.setStorageSync(STORAGE_KEY_CATEGORIES, [...selectedIds, dbId]);
       }
 
+      this._showToast(`词库「${name.trim()}」已创建并自动订阅 ✓`);
       this.setData({
         shareCode,
         pageState: 'done',

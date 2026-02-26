@@ -13,13 +13,16 @@ Page({
     groups: [],
     // 已选中的分类 id 集合
     selectedIds: [],
-    // 订阅的自定义词库列表 [{id, name, shareCode, words, wordCount, subscribedAt}]
+    // 订阅的自定义词库列表
     subscriptions: [],
     // 输入框：分享码
     inputShareCode: '',
     // 状态
     loading: false,
     toast: '',
+    // 词条预览弹窗
+    showWordsModal: false,
+    previewSub: {},
 
     // 自定义导航栏
     statusBarHeight: 0,
@@ -36,6 +39,11 @@ Page({
     this._loadData();
   },
 
+  // 每次页面显示时刷新（从创建页返回后能立即看到新词库）
+  onShow() {
+    this._loadData();
+  },
+
   _loadData() {
     // 加载已选分类
     let selectedIds = wx.getStorageSync(STORAGE_KEY_CATEGORIES);
@@ -44,8 +52,9 @@ Page({
       wx.setStorageSync(STORAGE_KEY_CATEGORIES, selectedIds);
     }
 
-    // 加载订阅词库
-    const subscriptions = wx.getStorageSync(STORAGE_KEY_SUBSCRIPTIONS) || [];
+    // 加载订阅词库，注入 checked 字段
+    const rawSubs = wx.getStorageSync(STORAGE_KEY_SUBSCRIPTIONS) || [];
+    const subscriptions = rawSubs.map(s => ({ ...s, checked: selectedIds.includes(s.id) }));
 
     // 构建分组展示数据
     const groups = DIFFICULTY_ORDER.map(diff => ({
@@ -60,6 +69,15 @@ Page({
     }));
 
     this.setData({ selectedIds, subscriptions, groups });
+  },
+
+  // 同步更新 subscriptions 里每项的 checked 字段
+  _refreshSubscriptionChecked(selectedIds) {
+    const subscriptions = this.data.subscriptions.map(s => ({
+      ...s,
+      checked: selectedIds.includes(s.id),
+    }));
+    this.setData({ subscriptions });
   },
 
   // ─── 切换内置分类勾选 ───────────────────────────────────
@@ -125,6 +143,7 @@ Page({
     this.setData({ loading: true });
     wx.cloud.callFunction({
       name: 'wordbankGet',
+      config: { env: 'board-game-6g6bcx73f538cbd0' },
       data: { shareCode: code },
     }).then(res => {
       const { wordbank } = res.result || {};
@@ -182,6 +201,7 @@ Page({
   // ─── 切换订阅词库的启用状态 ─────────────────────────────
   toggleSubscription(e) {
     const { id } = e.currentTarget.dataset;
+    if (!id) return;
     let { selectedIds } = this.data;
     const idx = selectedIds.indexOf(id);
     if (idx >= 0) {
@@ -191,6 +211,66 @@ Page({
     }
     wx.setStorageSync(STORAGE_KEY_CATEGORIES, selectedIds);
     this.setData({ selectedIds });
+    // 同步刷新 subscriptions 的 checked 字段，确保 UI 响应
+    this._refreshSubscriptionChecked(selectedIds);
+  },
+
+  // ─── 预览词条弹窗（自定义词库）──────────────────────────
+  previewWords(e) {
+    const { index } = e.currentTarget.dataset;
+    const sub = this.data.subscriptions[index];
+    if (!sub) return;
+    this.setData({ showWordsModal: true, previewSub: sub });
+  },
+
+  // ─── 预览词条弹窗（内置分类）────────────────────────────
+  previewBuiltin(e) {
+    const { id } = e.currentTarget.dataset;
+    const { CATEGORIES } = require('../../data/wordbank');
+    const cat = CATEGORIES.find(c => c.id === id);
+    if (!cat) return;
+    this.setData({
+      showWordsModal: true,
+      previewSub: {
+        name: cat.name,
+        words: cat.words,
+        wordCount: cat.words.length,
+        shareCode: '', // 内置分类无分享码，弹窗 footer 不显示
+      },
+    });
+  },
+
+  closeWordsModal() {
+    this.setData({ showWordsModal: false, previewSub: {} });
+  },
+
+  copyCodeFromModal() {
+    const code = this.data.previewSub.shareCode;
+    if (!code) return;
+    wx.setClipboardData({
+      data: code,
+      success: () => this._showToast(`分享码 ${code} 已复制 ✓`),
+    });
+  },
+
+  // ─── 从弹窗删除订阅 ──────────────────────────────────────
+  unsubscribeFromModal() {
+    const id = this.data.previewSub.id;
+    if (!id) return;
+    wx.showModal({
+      title: '取消订阅',
+      content: '确定删除该自定义词库？',
+      confirmColor: '#e94560',
+      success: ({ confirm }) => {
+        if (!confirm) return;
+        const subs = this.data.subscriptions.filter(s => s.id !== id);
+        const selectedIds = this.data.selectedIds.filter(x => x !== id);
+        wx.setStorageSync('wordbank_subscriptions', subs);
+        wx.setStorageSync('wordbank_selected_categories', selectedIds);
+        this.setData({ subscriptions: subs, selectedIds, showWordsModal: false, previewSub: {} });
+        this._showToast('已删除');
+      },
+    });
   },
 
   // ─── 创建自定义词库 ──────────────────────────────────────

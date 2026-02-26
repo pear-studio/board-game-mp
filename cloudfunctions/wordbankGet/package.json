@@ -2,5 +2,8 @@
   "name": "wordbankGet",
   "version": "1.0.0",
   "description": "通过分享码查询词库内容",
-  "main": "index.js"
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
 }

@@ -7,7 +7,7 @@
     <view class="custom-nav-bar" style="height: {{navBarHeight}}px; padding-right: {{navRightPadding}}px">
       <view class="nav-left-btns">
         <navigator class="nav-back" open-type="navigateBack">‹</navigator>
-        <view class="nav-rules-btn" bindtap="openRules">规则</view>
+        <view wx:if="{{currentStep !== 'setup'}}" class="nav-rules-btn" bindtap="openRules">规则</view>
         <view wx:if="{{currentStep !== 'setup'}}" class="nav-reset-btn" bindtap="goSetup">返回</view>
       </view>
       <text class="nav-title">狼人真言</text>
@@ -74,13 +74,17 @@
        阶段1：设置人数
   ══════════════════════════════════════ -->
   <view class="stage" wx:if="{{currentStep === 'setup'}}">
-    <view class="stage-header">
-      <text class="stage-emoji">🐺</text>
-      <text class="stage-title">狼人真言</text>
-      <text class="stage-desc">村长守护咒语，狼人暗中知晓\n村民能在限定时间内猜出吗？</text>
-    </view>
 
     <view class="setup-card">
+      <!-- 游戏标题行 + 规则按钮 -->
+      <view class="setup-title-row">
+        <view class="setup-title-info">
+          <text class="setup-game-title">狼人真言</text>
+          <text class="setup-game-desc">村长守护咒语，狼人暗中知晓，村民能猜出吗？</text>
+        </view>
+        <view class="setup-rules-btn" bindtap="openRules">规则</view>
+      </view>
+      <view class="divider"></view>
       <!-- 人数选择 -->
       <text class="setup-label">玩家人数</text>
       <view class="player-count-row">
