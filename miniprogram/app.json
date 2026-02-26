@@ -2,7 +2,8 @@
   "pages": [
     "pages/lobby/index",
     "pages/werewolf/index",
-    "pages/wordbank-settings/index"
+    "pages/wordbank-settings/index",
+    "pages/custom-wordbank/index"
   ],
   "window": {
     "backgroundColor": "#1a1a2e",

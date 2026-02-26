@@ -1,0 +1,330 @@
+/* pages/custom-wordbank/index.wxss */
+
+.cw-page {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+  padding: 24rpx 28rpx 80rpx;
+  box-sizing: border-box;
+  color: #fff;
+}
+
+/* ── 导航栏 ─── */
+.custom-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: #1a1a2e;
+  z-index: 200;
+}
+.custom-nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24rpx;
+  box-sizing: border-box;
+}
+.nav-back {
+  font-size: 56rpx;
+  color: #fff;
+  line-height: 1;
+  opacity: 0.85;
+  flex: 1;
+}
+.nav-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #fff;
+  flex: 1;
+  text-align: center;
+}
+.nav-placeholder { flex: 1; }
+
+/* ── Toast ─── */
+.cw-toast {
+  position: fixed;
+  bottom: 120rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 48rpx;
+  padding: 20rpx 44rpx;
+  z-index: 500;
+  max-width: 80%;
+  text-align: center;
+  white-space: nowrap;
+}
+.cw-toast.info  { background: rgba(0,0,0,0.78); }
+.cw-toast.error { background: rgba(200,30,50,0.85); }
+
+.cw-toast-text {
+  font-size: 28rpx;
+  color: #fff;
+}
+
+/* ── 表单卡片 ─── */
+.field-card {
+  background: rgba(255,255,255,0.07);
+  border: 1rpx solid rgba(255,255,255,0.12);
+  border-radius: 24rpx;
+  padding: 32rpx 28rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.field-label {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.45);
+  letter-spacing: 2rpx;
+}
+
+.field-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.word-counter {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.4);
+}
+
+.word-counter.full {
+  color: #e94560;
+}
+
+.field-input {
+  font-size: 32rpx;
+  color: #fff;
+  border-bottom: 1rpx solid rgba(255,255,255,0.15);
+  padding: 12rpx 0;
+  background: transparent;
+}
+
+.field-placeholder {
+  color: rgba(255,255,255,0.25);
+}
+
+.field-tip {
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.3);
+  line-height: 1.6;
+}
+
+/* ── 添加词条行 ─── */
+.add-word-row {
+  display: flex;
+  gap: 16rpx;
+  align-items: center;
+}
+
+.word-input {
+  flex: 1;
+  height: 80rpx;
+  background: rgba(255,255,255,0.08);
+  border: 1rpx solid rgba(255,255,255,0.15);
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  font-size: 30rpx;
+  color: #fff;
+  box-sizing: border-box;
+}
+
+.btn-add-word {
+  height: 80rpx;
+  min-width: 100rpx;
+  background: linear-gradient(135deg, #e94560, #c0392b);
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 28rpx;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.btn-add-word.disabled {
+  opacity: 0.35;
+}
+
+.btn-add-word:active:not(.disabled) {
+  opacity: 0.8;
+}
+
+.btn-add-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #fff;
+}
+
+/* ── 词条标签区 ─── */
+.words-area {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+  padding: 4rpx 0;
+}
+
+.word-tag {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  background: rgba(233,69,96,0.18);
+  border: 1rpx solid rgba(233,69,96,0.45);
+  border-radius: 48rpx;
+  padding: 10rpx 24rpx 10rpx 20rpx;
+}
+
+.word-tag:active {
+  background: rgba(233,69,96,0.35);
+}
+
+.word-tag-text {
+  font-size: 28rpx;
+  color: rgba(255,255,255,0.9);
+}
+
+.word-tag-del {
+  font-size: 30rpx;
+  color: rgba(255,100,100,0.7);
+  line-height: 1;
+}
+
+.words-empty {
+  padding: 48rpx 0 24rpx;
+  text-align: center;
+}
+
+.words-empty-text {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.25);
+}
+
+/* ── 提交按钮 ─── */
+.btn-submit {
+  width: 100%;
+  background: linear-gradient(135deg, #e94560, #c0392b);
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: 600;
+  border-radius: 56rpx;
+  padding: 28rpx 0;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(233,69,96,0.4);
+  margin-top: 8rpx;
+}
+
+.btn-submit.disabled {
+  opacity: 0.4;
+  box-shadow: none;
+}
+
+.btn-submit:active:not(.disabled) {
+  opacity: 0.85;
+  transform: scale(0.98);
+}
+
+/* ── 完成卡片 ─── */
+.done-card {
+  background: rgba(255,255,255,0.07);
+  border: 1rpx solid rgba(255,255,255,0.12);
+  border-radius: 28rpx;
+  padding: 56rpx 36rpx 48rpx;
+  margin-bottom: 32rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.done-icon {
+  font-size: 96rpx;
+}
+
+.done-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.done-name {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #ffd700;
+}
+
+.done-count {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.45);
+}
+
+/* ── 分享码展示 ─── */
+.sharecode-box {
+  width: 100%;
+  background: rgba(233,69,96,0.12);
+  border: 2rpx solid rgba(233,69,96,0.4);
+  border-radius: 20rpx;
+  padding: 32rpx 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8rpx 0 4rpx;
+  box-sizing: border-box;
+}
+
+.sharecode-label {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.45);
+}
+
+.sharecode-value {
+  font-size: 52rpx;
+  font-weight: 800;
+  color: #e94560;
+  letter-spacing: 10rpx;
+  text-align: center;
+  flex: 1;
+}
+
+.sharecode-copy {
+  font-size: 22rpx;
+  color: rgba(255,255,255,0.4);
+  white-space: nowrap;
+}
+
+.done-tip {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.4);
+  text-align: center;
+  line-height: 1.7;
+  margin-top: 4rpx;
+}
+
+/* ── 完成页按钮 ─── */
+.btn-share {
+  width: 100%;
+  background: linear-gradient(135deg, #e94560, #c0392b);
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 600;
+  border-radius: 56rpx;
+  padding: 28rpx 0;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(233,69,96,0.35);
+  margin-bottom: 20rpx;
+}
+
+.btn-share:active { opacity: 0.85; }
+
+.btn-back {
+  width: 100%;
+  background: rgba(255,255,255,0.08);
+  border: 1rpx solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.65);
+  font-size: 30rpx;
+  font-weight: 500;
+  border-radius: 56rpx;
+  padding: 28rpx 0;
+}
+
+.btn-back:active { opacity: 0.7; }
