@@ -215,6 +215,31 @@
 
 .item-del:active { background: rgba(233,69,96,0.2); color: #e94560; }
 
+.action-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1rpx solid rgba(255,255,255,0.12);
+  border-radius: 16rpx;
+  padding: 8rpx 20rpx;
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.7);
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+
+.action-btn.edit {
+  background: rgba(52,152,219,0.15);
+  border-color: rgba(52,152,219,0.4);
+  color: #85c1e9;
+}
+
+.action-btn:active {
+  background: rgba(255,255,255,0.12);
+}
+
+.action-btn.edit:active {
+  background: rgba(52,152,219,0.25);
+}
+
 .checkbox {
   width: 44rpx;
   height: 44rpx;

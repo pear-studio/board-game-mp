@@ -36,12 +36,29 @@ Page({
     const navBarHeight = (menuBtn.top - statusBarHeight) * 2 + menuBtn.height;
     const navRightPadding = wx.getSystemInfoSync().windowWidth - menuBtn.left + 8;
     this.setData({ statusBarHeight, navBarHeight, navRightPadding });
+    this._getOpenId();
     this._loadData();
+  },
+
+  // 获取当前用户的 openid
+  _getOpenId() {
+    wx.cloud.callFunction({
+      name: 'quickstartFunctions',
+      config: { env: 'board-game-6g6bcx73f538cbd0' },
+      data: { type: 'getOpenId' },
+    }).then(res => {
+      if (res.result && res.result.openid) {
+        this.setData({ openid: res.result.openid });
+      }
+    }).catch(err => {
+      console.warn('[getOpenId] error:', err);
+    });
   },
 
   // 每次页面显示时刷新（从创建页返回后能立即看到新词库）
   onShow() {
     this._loadData();
+    this._checkCloudUpdates();
   },
 
   _loadData() {
@@ -52,9 +69,14 @@ Page({
       wx.setStorageSync(STORAGE_KEY_CATEGORIES, selectedIds);
     }
 
-    // 加载订阅词库，注入 checked 字段
+    // 加载订阅词库，注入 checked 和 isCreator 字段
     const rawSubs = wx.getStorageSync(STORAGE_KEY_SUBSCRIPTIONS) || [];
-    const subscriptions = rawSubs.map(s => ({ ...s, checked: selectedIds.includes(s.id) }));
+    const openid = this.data.openid;
+    const subscriptions = rawSubs.map(s => ({
+      ...s,
+      checked: selectedIds.includes(s.id),
+      isCreator: openid && s.creatorOpenId === openid,
+    }));
 
     // 构建分组展示数据
     const groups = DIFFICULTY_ORDER.map(diff => ({
@@ -73,9 +95,11 @@ Page({
 
   // 同步更新 subscriptions 里每项的 checked 字段
   _refreshSubscriptionChecked(selectedIds) {
+    const openid = this.data.openid;
     const subscriptions = this.data.subscriptions.map(s => ({
       ...s,
       checked: selectedIds.includes(s.id),
+      isCreator: openid && s.creatorOpenId === openid,
     }));
     this.setData({ subscriptions });
   },
@@ -86,6 +110,11 @@ Page({
     let { selectedIds } = this.data;
     const idx = selectedIds.indexOf(id);
     if (idx >= 0) {
+      // 检查是否是最后一个选中的分类
+      if (selectedIds.length === 1) {
+        this._showToast('至少保留一个分类');
+        return;
+      }
       selectedIds = selectedIds.filter(x => x !== id);
     } else {
       selectedIds = [...selectedIds, id];
@@ -100,7 +129,13 @@ Page({
     const groupIds = CATEGORIES.filter(c => c.difficulty === difficulty).map(c => c.id);
     const allSelected = groupIds.every(id => selectedIds.includes(id));
     if (allSelected) {
-      selectedIds = selectedIds.filter(id => !groupIds.includes(id));
+      // 检查取消全选后是否会导致所有分类都被取消
+      const remainingIds = selectedIds.filter(id => !groupIds.includes(id));
+      if (remainingIds.length === 0) {
+        this._showToast('至少保留一个分类');
+        return;
+      }
+      selectedIds = remainingIds;
     } else {
       const toAdd = groupIds.filter(id => !selectedIds.includes(id));
       selectedIds = [...selectedIds, ...toAdd];
@@ -159,6 +194,9 @@ Page({
         words: wordbank.words,
         wordCount: (wordbank.words || []).length,
         subscribedAt: Date.now(),
+        allowEdit: wordbank.allowEdit || false,
+        creatorOpenId: wordbank.creatorOpenId,
+        creatorName: wordbank.creatorName,
       }];
       wx.setStorageSync(STORAGE_KEY_SUBSCRIPTIONS, subs);
 
@@ -205,6 +243,11 @@ Page({
     let { selectedIds } = this.data;
     const idx = selectedIds.indexOf(id);
     if (idx >= 0) {
+      // 检查是否是最后一个选中的分类
+      if (selectedIds.length === 1) {
+        this._showToast('至少保留一个分类');
+        return;
+      }
       selectedIds = selectedIds.filter(x => x !== id);
     } else {
       selectedIds = [...selectedIds, id];
@@ -278,6 +321,17 @@ Page({
     wx.navigateTo({ url: '/pages/custom-wordbank/index' });
   },
 
+  // ─── 编辑自定义词库 ──────────────────────────────────────
+  editWordbank(e) {
+    const { index } = e.currentTarget.dataset;
+    const sub = this.data.subscriptions[index];
+    if (!sub) return;
+    // 跳转到自定义词库页面，传递词库信息
+    wx.navigateTo({
+      url: `/pages/custom-wordbank/index?shareCode=${sub.shareCode}`
+    });
+  },
+
   // ─── 工具方法 ─────────────────────────────────────────────
   _showToast(text) {
     this.setData({ toast: text });
@@ -297,5 +351,56 @@ Page({
       .filter(s => selectedIds.includes(s.id))
       .reduce((sum, s) => sum + (s.wordCount || 0), 0);
     return builtinCount + customCount;
+  },
+
+  // ─── 检查订阅词库云端更新 ──────────────────────────────
+  async _checkCloudUpdates() {
+    const subscriptions = wx.getStorageSync(STORAGE_KEY_SUBSCRIPTIONS) || [];
+    if (!subscriptions.length) return;
+
+    // 批量检查每个订阅词库的更新
+    for (const sub of subscriptions) {
+      if (!sub.shareCode) continue;
+      try {
+        const res = await wx.cloud.callFunction({
+          name: 'wordbankGet',
+          config: { env: 'board-game-6g6bcx73f538cbd0' },
+          data: { shareCode: sub.shareCode },
+        });
+
+        const { wordbank } = res.result || {};
+        if (!wordbank) continue;
+
+        // 检查是否有更新（比较词库内容长度或更新时间）
+        const hasUpdate = 
+          (!sub.wordCount || sub.wordCount !== wordbank.wordCount) ||
+          (!sub.updatedAt || sub.updatedAt < (wordbank.updatedAt || Date.now()));
+
+        if (hasUpdate) {
+          // 更新本地缓存
+          const updatedSub = {
+            ...sub,
+            words: wordbank.words,
+            wordCount: wordbank.wordCount,
+            updatedAt: wordbank.updatedAt || Date.now(),
+            allowEdit: wordbank.allowEdit || false,
+            creatorOpenId: wordbank.creatorOpenId,
+            creatorName: wordbank.creatorName,
+          };
+
+          // 更新订阅列表
+          const updatedSubs = subscriptions.map(s => 
+            s.id === wordbank._id ? updatedSub : s
+          );
+          wx.setStorageSync(STORAGE_KEY_SUBSCRIPTIONS, updatedSubs);
+
+          // 刷新页面数据
+          this._loadData();
+        }
+      } catch (err) {
+        // 网络错误或其他异常，静默处理
+        console.warn('[checkCloudUpdates] error:', err);
+      }
+    }
   },
 });

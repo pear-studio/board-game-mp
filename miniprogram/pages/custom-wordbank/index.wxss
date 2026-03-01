@@ -397,3 +397,153 @@
 }
 
 .btn-back:active { opacity: 0.7; }
+
+/* ── 词库列表页样式 ─── */
+
+/* 创建词库按钮 */
+.btn-create {
+  width: 100%;
+  background: linear-gradient(135deg, #e94560, #c0392b);
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 600;
+  border-radius: 56rpx;
+  padding: 28rpx 0;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(233,69,96,0.35);
+  margin-bottom: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+}
+
+.btn-create-icon {
+  font-size: 40rpx;
+  line-height: 1;
+}
+
+.btn-create:active { opacity: 0.85; }
+
+/* 词库列表 */
+.wordbank-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.wordbank-item {
+  background: rgba(255,255,255,0.07);
+  border: 1rpx solid rgba(255,255,255,0.12);
+  border-radius: 24rpx;
+  padding: 32rpx 28rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.wordbank-item-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.wordbank-item-name {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #fff;
+}
+
+.wordbank-item-creator {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.45);
+}
+
+.wordbank-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  padding: 12rpx 0;
+  border-top: 1rpx solid rgba(255,255,255,0.08);
+  border-bottom: 1rpx solid rgba(255,255,255,0.08);
+}
+
+.wordbank-item-count {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.65);
+}
+
+.wordbank-item-code {
+  font-size: 24rpx;
+  color: rgba(255,255,255,0.45);
+  margin-top: 4rpx;
+}
+
+.wordbank-item-actions {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 8rpx;
+}
+
+.wordbank-action-btn {
+  flex: 1;
+  height: 72rpx;
+  background: rgba(255,255,255,0.1);
+  border: 1rpx solid rgba(255,255,255,0.2);
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.wordbank-action-btn:active {
+  background: rgba(255,255,255,0.18);
+}
+
+.wordbank-action-btn.delete {
+  background: rgba(233,69,96,0.15);
+  border-color: rgba(233,69,96,0.4);
+}
+
+.wordbank-action-btn.delete:active {
+  background: rgba(233,69,96,0.25);
+}
+
+.action-btn-text {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+}
+
+.wordbank-action-btn.delete .action-btn-text {
+  color: #e94560;
+}
+
+/* 空状态 */
+.wordbank-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
+  padding: 120rpx 40rpx;
+  text-align: center;
+}
+
+.wordbank-empty-icon {
+  font-size: 120rpx;
+  opacity: 0.2;
+}
+
+.wordbank-empty-text {
+  font-size: 32rpx;
+  color: rgba(255,255,255,0.35);
+  font-weight: 500;
+}
+
+.wordbank-empty-desc {
+  font-size: 26rpx;
+  color: rgba(255,255,255,0.25);
+  line-height: 1.6;
+}
+

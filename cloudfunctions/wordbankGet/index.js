@@ -38,6 +38,10 @@ exports.main = async (event) => {
       shareCode: doc.shareCode,
       wordCount: (doc.words || []).length,
       createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt,
+      allowEdit: doc.allowEdit || false,
+      creatorOpenId: doc.creatorOpenId,
+      creatorName: doc.creatorName,
     },
   };
 };

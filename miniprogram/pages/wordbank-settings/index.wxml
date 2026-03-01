@@ -98,23 +98,30 @@
 
   <!-- 订阅列表 -->
   <view class="sub-list" wx:if="{{subscriptions.length > 0}}">
-    <view class="item-row" wx:for="{{subscriptions}}" wx:key="id" bindtap="toggleSubscription" data-id="{{item.id}}">
+    <view class="item-row" wx:for="{{subscriptions}}" wx:key="id">
       <!-- 左：眼睛预览（阻止冒泡，不触发行选中） -->
       <view class="item-eye" catchtap="previewWords" data-index="{{index}}">
         <text class="eye-icon">◉</text>
       </view>
       <!-- 中：名称 + meta -->
-      <view class="item-info">
+      <view class="item-info" bindtap="toggleSubscription" data-id="{{item.id}}">
         <view class="item-name-row">
           <text class="item-name">{{item.name}}</text>
           <text wx:if="{{item.allowEdit}}" class="sub-badge edit">可编辑</text>
         </view>
         <text class="item-count">{{item.wordCount}}词 · {{item.shareCode}}<text wx:if="{{item.creatorName}}"> · {{item.creatorName}}</text></text>
       </view>
-      <!-- 右：checkbox（视觉展示，点击由行级事件处理） -->
-      <view class="item-check">
-        <view class="checkbox {{item.checked ? 'checked' : ''}}">
-          <text wx:if="{{item.checked}}" class="check-mark">✓</text>
+      <!-- 右：操作按钮 -->
+      <view class="item-actions">
+        <!-- 编辑按钮 -->
+        <view wx:if="{{item.isCreator || item.allowEdit}}" class="action-btn edit" catchtap="editWordbank" data-index="{{index}}">
+          <text>编辑</text>
+        </view>
+        <!-- checkbox（视觉展示，点击由行级事件处理） -->
+        <view class="item-check" bindtap="toggleSubscription" data-id="{{item.id}}">
+          <view class="checkbox {{item.checked ? 'checked' : ''}}">
+            <text wx:if="{{item.checked}}" class="check-mark">✓</text>
+          </view>
         </view>
       </view>
     </view>

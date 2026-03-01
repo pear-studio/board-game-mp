@@ -19,7 +19,7 @@ Page({
     inputWord: '',
     // 已添加的词列表
     words: [],
-    // 页面状态: 'edit' | 'done'
+    // 页面状态: 'edit' | 'done' | 'list'
     pageState: 'edit',
     // 生成的分享码
     shareCode: '',
@@ -28,6 +28,8 @@ Page({
     // toast
     toast: '',
     toastType: 'info', // 'info' | 'error'
+    // 已订阅词库列表
+    subscriptions: [],
 
     // 自定义导航栏
     statusBarHeight: 0,
@@ -35,12 +37,42 @@ Page({
     navRightPadding: 100,
   },
 
-  onLoad() {
+  onLoad(options) {
     const { statusBarHeight } = wx.getSystemInfoSync();
     const menuBtn = wx.getMenuButtonBoundingClientRect();
     const navBarHeight = (menuBtn.top - statusBarHeight) * 2 + menuBtn.height;
     const navRightPadding = wx.getSystemInfoSync().windowWidth - menuBtn.left + 8;
     this.setData({ statusBarHeight, navBarHeight, navRightPadding });
+    this._loadSubscriptions();
+    
+    // 检查是否从词库设置页跳转过来编辑词库
+    if (options.shareCode) {
+      this._loadWordbankForEdit(options.shareCode);
+    }
+  },
+
+  // 加载词库信息用于编辑
+  _loadWordbankForEdit(shareCode) {
+    const subs = wx.getStorageSync(STORAGE_KEY_SUBSCRIPTIONS) || [];
+    const sub = subs.find(s => s.shareCode === shareCode);
+    if (sub) {
+      this.setData({
+        name: sub.name,
+        creatorName: sub.creatorName || '',
+        allowEdit: sub.allowEdit || false,
+        words: sub.words || [],
+        shareCode: sub.shareCode,
+      });
+    }
+  },
+
+  onShow() {
+    this._loadSubscriptions();
+  },
+
+  _loadSubscriptions() {
+    const subscriptions = wx.getStorageSync(STORAGE_KEY_SUBSCRIPTIONS) || [];
+    this.setData({ subscriptions });
   },
 
   // ─── 输入处理 ──────────────────────────────────────────
@@ -92,7 +124,7 @@ Page({
   // ─── 提交创建 ──────────────────────────────────────────
 
   submitWordbank() {
-    const { name, words } = this.data;
+    const { name, words, shareCode: existingShareCode } = this.data;
 
     if (!name.trim()) {
       this._showToast('请输入词库名称', 'error');
@@ -106,11 +138,22 @@ Page({
     this.setData({ submitting: true });
 
     const { creatorName, allowEdit } = this.data;
+    
+    // 查找词库 id（编辑模式）
+    let id = null;
+    if (existingShareCode) {
+      const subs = wx.getStorageSync(STORAGE_KEY_SUBSCRIPTIONS) || [];
+      const sub = subs.find(s => s.shareCode === existingShareCode);
+      if (sub) {
+        id = sub.id;
+      }
+    }
 
     wx.cloud.callFunction({
       name: 'wordbankSave',
       config: { env: 'board-game-6g6bcx73f538cbd0' },
       data: {
+        id,
         name: name.trim(),
         words,
         creatorName: creatorName.trim(),
@@ -119,32 +162,55 @@ Page({
     }).then(res => {
       const { code, shareCode, error } = res.result || {};
       if (code !== 0) {
-        this._showToast(error || '创建失败，请重试', 'error');
+        this._showToast(error || '操作失败，请重试', 'error');
         this.setData({ submitting: false });
         return;
       }
 
-      // 自动写入订阅列表 + 勾选
+      // 自动更新订阅列表
       const subs = wx.getStorageSync(STORAGE_KEY_SUBSCRIPTIONS) || [];
       const dbId = res.result.id;
-      subs.push({
-        id: dbId,
-        name: name.trim(),
-        shareCode,
-        words,
-        wordCount: words.length,
-        creatorName: creatorName.trim(),
-        allowEdit,
-        subscribedAt: Date.now(),
-      });
-      wx.setStorageSync(STORAGE_KEY_SUBSCRIPTIONS, subs);
+      
+      if (id) {
+        // 编辑模式：更新现有词库
+        const updatedSubs = subs.map(s => {
+          if (s.id === dbId) {
+            return {
+              ...s,
+              name: name.trim(),
+              words,
+              wordCount: words.length,
+              creatorName: creatorName.trim(),
+              allowEdit,
+              updatedAt: Date.now(),
+            };
+          }
+          return s;
+        });
+        wx.setStorageSync(STORAGE_KEY_SUBSCRIPTIONS, updatedSubs);
+        this._showToast(`词库「${name.trim()}」已更新 ✓`);
+      } else {
+        // 新建模式：添加新词库
+        subs.push({
+          id: dbId,
+          name: name.trim(),
+          shareCode,
+          words,
+          wordCount: words.length,
+          creatorName: creatorName.trim(),
+          allowEdit,
+          subscribedAt: Date.now(),
+        });
+        wx.setStorageSync(STORAGE_KEY_SUBSCRIPTIONS, subs);
 
-      const selectedIds = wx.getStorageSync(STORAGE_KEY_CATEGORIES) || [];
-      if (!selectedIds.includes(dbId)) {
-        wx.setStorageSync(STORAGE_KEY_CATEGORIES, [...selectedIds, dbId]);
+        const selectedIds = wx.getStorageSync(STORAGE_KEY_CATEGORIES) || [];
+        if (!selectedIds.includes(dbId)) {
+          wx.setStorageSync(STORAGE_KEY_CATEGORIES, [...selectedIds, dbId]);
+        }
+
+        this._showToast(`词库「${name.trim()}」已创建并自动订阅 ✓`);
       }
 
-      this._showToast(`词库「${name.trim()}」已创建并自动订阅 ✓`);
       this.setData({
         shareCode,
         pageState: 'done',
@@ -180,6 +246,100 @@ Page({
       title: `我创建了词库「${this.data.name}」，分享码：${this.data.shareCode}，快来订阅！`,
       path: '/pages/wordbank-settings/index',
     };
+  },
+
+  // ─── 词库列表相关 ──────────────────────────────────────
+
+  // 切换到词库列表页面
+  goToWordbankList() {
+    this.setData({ pageState: 'list' });
+  },
+
+  // 切换到创建词库页面
+  goToCreate() {
+    this.setData({
+      pageState: 'edit',
+      name: '',
+      creatorName: '',
+      allowEdit: false,
+      inputWord: '',
+      words: [],
+      shareCode: '',
+    });
+  },
+
+  // 编辑词库
+  editWordbank(e) {
+    const { index } = e.currentTarget.dataset;
+    const sub = this.data.subscriptions[index];
+    if (!sub) return;
+    this.setData({
+      pageState: 'edit',
+      name: sub.name,
+      creatorName: sub.creatorName || '',
+      allowEdit: sub.allowEdit || false,
+      words: sub.words || [],
+      shareCode: sub.shareCode,
+    });
+  },
+
+  // 删除词库
+  deleteWordbank(e) {
+    const { index } = e.currentTarget.dataset;
+    const sub = this.data.subscriptions[index];
+    if (!sub) return;
+    
+    // 检查是否是词库创建者
+    wx.cloud.callFunction({
+      name: 'quickstartFunctions',
+      config: { env: 'board-game-6g6bcx73f538cbd0' },
+      data: { type: 'getOpenId' },
+    }).then(res => {
+      if (res.result && res.result.openid) {
+        const openid = res.result.openid;
+        if (openid !== sub.creatorOpenId) {
+          this._showToast('只有词库创建者才能删除词库', 'error');
+          return;
+        }
+        
+        // 显示删除确认弹窗，提醒会影响其他人
+        wx.showModal({
+          title: '删除词库',
+          content: '确定删除该词库吗？删除后无法恢复，且会影响所有订阅该词库的用户。',
+          confirmColor: '#e94560',
+          success: ({ confirm }) => {
+            if (!confirm) return;
+            // 调用云函数删除词库
+            wx.cloud.callFunction({
+              name: 'wordbankDelete',
+              config: { env: 'board-game-6g6bcx73f538cbd0' },
+              data: { id: sub.id },
+            }).then(res => {
+              const { code, error } = res.result || {};
+              if (code !== 0) {
+                this._showToast(error || '删除失败，请重试', 'error');
+                return;
+              }
+              // 从本地存储中删除
+              const subs = this.data.subscriptions.filter((_, i) => i !== index);
+              wx.setStorageSync(STORAGE_KEY_SUBSCRIPTIONS, subs);
+              // 从已选分类中移除
+              const selectedIds = wx.getStorageSync(STORAGE_KEY_CATEGORIES) || [];
+              const newSelectedIds = selectedIds.filter(id => id !== sub.id);
+              wx.setStorageSync(STORAGE_KEY_CATEGORIES, newSelectedIds);
+              this.setData({ subscriptions: subs });
+              this._showToast('词库已删除');
+            }).catch(err => {
+              console.error('[wordbankDelete]', err);
+              this._showToast('网络错误，请重试', 'error');
+            });
+          },
+        });
+      }
+    }).catch(err => {
+      console.error('[getOpenId] error:', err);
+      this._showToast('获取用户信息失败，请重试', 'error');
+    });
   },
 
   // ─── 工具 ──────────────────────────────────────────────

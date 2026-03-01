@@ -22,7 +22,7 @@ function genCode() {
 
 exports.main = async (event, context) => {
   const { OPENID } = cloud.getWXContext();
-  const { name, words, creatorName = '', allowEdit = false } = event;
+  const { id, name, words, creatorName = '', allowEdit = false } = event;
 
   // ── 基础校验 ───────────────────────────────
   if (!name || typeof name !== 'string' || !name.trim()) {
@@ -61,7 +61,39 @@ exports.main = async (event, context) => {
     console.warn('[msgSecCheck] warn:', err);
   }
 
-  // ── 生成唯一分享码（碰撞重试）───────────────
+  const now = Date.now();
+
+  // ── 编辑模式 ────────────────────────────────
+  if (id) {
+    // 检查词库是否存在且当前用户是创建者
+    const doc = await db.collection(COLL).doc(id).get();
+    if (!doc.data) {
+      return { code: 7, error: '词库不存在' };
+    }
+    if (doc.data.creatorOpenId !== OPENID) {
+      return { code: 8, error: '无权限编辑该词库' };
+    }
+
+    // 更新词库
+    await db.collection(COLL).doc(id).update({
+      data: {
+        name: name.trim(),
+        words: cleaned,
+        creatorName: String(creatorName).trim().slice(0, 10),
+        allowEdit: !!allowEdit,
+        updatedAt: now,
+      },
+    });
+
+    return {
+      code: 0,
+      id,
+      shareCode: doc.data.shareCode,
+    };
+  }
+
+  // ── 新建模式 ────────────────────────────────
+  // 生成唯一分享码（碰撞重试）
   let shareCode = '';
   for (let i = 0; i < MAX_RETRY; i++) {
     const candidate = genCode();
@@ -77,8 +109,7 @@ exports.main = async (event, context) => {
     return { code: 6, error: '系统繁忙，请稍后重试' };
   }
 
-  // ── 写入数据库 ────────────────────────────────
-  const now = Date.now();
+  // 写入数据库
   const addRes = await db.collection(COLL).add({
     data: {
       name: name.trim(),

@@ -5,7 +5,9 @@
   <view class="custom-nav" style="padding-top: {{statusBarHeight}}px">
     <view class="custom-nav-bar" style="height: {{navBarHeight}}px; padding-right: {{navRightPadding}}px">
       <navigator class="nav-back" open-type="navigateBack">‹</navigator>
-      <text class="nav-title">{{pageState === 'done' ? '创建成功' : '创建词库'}}</text>
+      <text class="nav-title">
+        {{pageState === 'done' ? '创建成功' : pageState === 'list' ? '我的词库' : '创建词库'}}
+      </text>
       <view class="nav-placeholder"></view>
     </view>
   </view>
@@ -130,6 +132,52 @@
     <!-- 操作按钮 -->
     <button class="btn-share" open-type="share">📤 分享给朋友</button>
     <button class="btn-back" bindtap="goBack">← 返回词库设置</button>
+
+    <view style="height: 60rpx"></view>
+  </block>
+
+  <!-- ══ 词库列表状态 ══ -->
+  <block wx:if="{{pageState === 'list'}}">
+
+    <!-- 创建词库按钮 -->
+    <button class="btn-create" bindtap="goToCreate">
+      <text class="btn-create-icon">+</text>
+      <text class="btn-create-text">创建新词库</text>
+    </button>
+
+    <!-- 词库列表 -->
+    <view class="wordbank-list" wx:if="{{subscriptions.length > 0}}">
+      <view
+        class="wordbank-item"
+        wx:for="{{subscriptions}}"
+        wx:key="id"
+      >
+        <view class="wordbank-item-header">
+          <text class="wordbank-item-name">{{item.name}}</text>
+          <text class="wordbank-item-creator" wx:if="{{item.creatorName}}">
+            创建者：{{item.creatorName}}
+          </text>
+        </view>
+        <view class="wordbank-item-info">
+          <text class="wordbank-item-count">{{item.wordCount || 0}} 个词条</text>
+          <text class="wordbank-item-code" wx:if="{{item.shareCode}}">分享码：{{item.shareCode}}</text>
+        </view>
+        <view class="wordbank-item-actions">
+          <!-- 编辑和删除按钮只对创建者显示 -->
+          <view class="wordbank-action-btn" bindtap="editWordbank" data-index="{{index}}">
+            <text class="action-btn-text">编辑</text>
+          </view>
+          <view class="wordbank-action-btn delete" bindtap="deleteWordbank" data-index="{{index}}">
+            <text class="action-btn-text">删除</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="wordbank-empty" wx:else>
+      <text class="wordbank-empty-icon">📚</text>
+      <text class="wordbank-empty-text">还没有订阅任何词库</text>
+      <text class="wordbank-empty-desc">创建或订阅词库来扩充你的词池</text>
+    </view>
 
     <view style="height: 60rpx"></view>
   </block>
